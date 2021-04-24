@@ -25,19 +25,61 @@ namespace ConsidWebExercise.Controllers
             return View(categoryList);
         }
 
+        // GET: Category/Edit
+        public IActionResult Edit(int? id)
+        {
+            Category categoryObj = _db.Categories.Find(id);
+            return View(categoryObj);
+        }
+
         // GET: Category/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: Category/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public IActionResult Create(Category categoryObj)
         {
-            _db.Add(categoryObj);
-            _db.SaveChanges();
-            return Redirect("Index");
+            if (ModelState.IsValid)
+            {
+                _db.Add(categoryObj);
+                _db.SaveChanges();
+                return Redirect("Index");
+            }
+            return View(categoryObj);
+        }
+
+        // POST: Category/Delete/id
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int? id)
+        {
+            // Add check if the category is refeered to in any of the library items
+            Category category = _db.Categories.Find(id);
+            if (category != null)
+            {
+                _db.Categories.Remove(category);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return RedirectToAction("Index");
+        }
+
+        // POST: Category/Edit/id
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Edit(Category categoryObj)
+        {
+            if (ModelState.IsValid)
+            {
+                _db.Categories.Update(categoryObj);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(categoryObj);
         }
     }
 }
