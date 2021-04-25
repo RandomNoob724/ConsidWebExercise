@@ -1,0 +1,65 @@
+﻿@model ConsidWebExercise.ViewModels.ListLibraryItemViewModel
+@{
+    ViewData["Title"] = "Library Item";
+}
+
+<div class="container p-3">
+    <div class="row pt-4">
+        <div class="col-6">
+            <h2 class="text-primary">Library Item List</h2>
+        </div>
+        <div class="col-6 text-right">
+            <a asp-controller="LibraryItem" asp-action="Create" class="btn btn-primary">Create New Library Item</a>
+        </div>
+    </div>
+    <br /><br />
+
+    @if (Model.libraryItems.Count() > 0)
+    {
+        <table class="table table-bordered table-striped" style="width:100%">
+            <thead>
+                <tr>
+                    <th>
+                        Title
+                    </th>
+                    <th>Author</th>
+                    <th>Pages</th>
+                    <th>Run Time Minues</th>
+                    <th>Is Barrowable</th>
+                    <th>Barrower</th>
+                    <th>Barrow Date</th>
+                    <th>Type</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var obj in Model.libraryItems)
+                {
+                    <tr>
+                        <td>@obj.Title</td>
+                        <td>@obj.Author</td>
+                        <td>@obj.Pages</td>
+                        <td>@obj.RunTimeMinutes</td>
+                        <td>@obj.IsBorrowable</td>
+                        <td>@obj.Barrower</td>
+                        <td>@obj.BarrowDate</td>
+                        <td>@obj.Type</td>
+                        <td class="text-center">
+                            <div class="w-75 btn-group" role="group">
+                                <a asp-controller="LibraryItem" asp-route-Id="@obj.Id" asp-action="Edit" class="btn btn-info mx-2">Edit</a>
+                                <form asp-action="Delete" asp-route-id="@obj.Id " method="post">
+                                    <button type="submit" class="btn btn-danger mx-2">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No Category Exist</p>
+    }
+
+</div>

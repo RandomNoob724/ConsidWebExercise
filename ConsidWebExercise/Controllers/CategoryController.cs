@@ -59,6 +59,11 @@ namespace ConsidWebExercise.Controllers
         {
             // Add check if the category is refeered to in any of the library items
             Category category = _db.Categories.Find(id);
+            var libraryItemsWithCategory = _db.LibraryItems.Where(item => item.Category == category).ToList();
+            if(libraryItemsWithCategory.Count() > 0)
+            {
+                return RedirectToAction("Index");
+            }
             if (category != null)
             {
                 _db.Categories.Remove(category);

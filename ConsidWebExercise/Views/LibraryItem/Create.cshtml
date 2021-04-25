@@ -1,0 +1,125 @@
+﻿@model ConsidWebExercise.ViewModels.CreateLibraryItemViewModel
+@{
+    ViewData["Title"] = "Create Library Item";
+}
+
+<form method="post" asp-action="Create">
+    <div class="border p-3">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group row">
+            <h2 class="text-info pl-3">Create Library Item</h2>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="LibraryItem.Category.Id"></label>
+                    </div>
+                    <div class="col-8">
+                        <select asp-for="LibraryItem.Category.Id" asp-items="@(new SelectList(Model.Categories,"Id","CategoryName"))">
+                        </select>
+                        <span asp-validation-for="LibraryItem.Category.Id" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="LibraryItem.Title"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="LibraryItem.Title" class="form-control" />
+                        <span asp-validation-for="LibraryItem.Title" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="LibraryItem.Author"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="LibraryItem.Author" class="form-control" />
+                        <span asp-validation-for="LibraryItem.Author" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="LibraryItem.Pages"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="LibraryItem.Pages" class="form-control" />
+                        <span asp-validation-for="LibraryItem.Pages" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="LibraryItem.RunTimeMinutes"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="LibraryItem.RunTimeMinutes" class="form-control" />
+                        <span asp-validation-for="LibraryItem.RunTimeMinutes" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="LibraryItem.IsBorrowable"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="LibraryItem.IsBorrowable" class="form-control" />
+                        <span asp-validation-for="LibraryItem.IsBorrowable" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="LibraryItem.Barrower"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="LibraryItem.Barrower" class="form-control" />
+                        <span asp-validation-for="LibraryItem.Barrower" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="LibraryItem.BarrowDate"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="LibraryItem.BarrowDate" class="form-control" />
+                        <span asp-validation-for="LibraryItem.BarrowDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="LibraryItem.Type"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="LibraryItem.Type" class="form-control" />
+                        <span asp-validation-for="LibraryItem.Type" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-8 offset-4 row">
+                        <div class="col">
+                            <input type="submit" class="btn btn-info w-100" value="Create" />
+                        </div>
+                        <div class="col">
+                            <a asp-action="Index" class="btn btn-success w-100">Back</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                @* Keep this empty *@
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ <partial name="_ValidationScriptsPartial"/>}
+}
