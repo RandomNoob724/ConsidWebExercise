@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ConsidWebExercise.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210423202942_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20210425152120_initial-create")]
+    partial class initialcreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -25,6 +25,7 @@ namespace ConsidWebExercise.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("CategoryName")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");

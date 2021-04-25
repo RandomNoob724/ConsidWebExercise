@@ -13,12 +13,12 @@
             <div class="col-8">
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="LibraryItem.Category.Id"></label>
+                        <label asp-for="LibraryItem.CategoryId"></label>
                     </div>
                     <div class="col-8">
-                        <select asp-for="LibraryItem.Category.Id" asp-items="@(new SelectList(Model.Categories, "Id", "CategoryName"))">
+                        <select asp-for="LibraryItem.CategoryId" asp-items="@(new SelectList(Model.Categories, "Id", "CategoryName"))">
                         </select>
-                        <span asp-validation-for="LibraryItem.Category.Id" class="text-danger"></span>
+                        <span asp-validation-for="LibraryItem.CategoryId" class="text-danger"></span>
                     </div>
                 </div>
 

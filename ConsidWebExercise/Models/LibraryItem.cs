@@ -11,20 +11,16 @@ namespace ConsidWebExercise.Models
     {
         [Key]
         public int Id { get; set; }
+        public int CategoryId { get; set; }
         [ForeignKey("CategoryId")]
-        public Category Category { get; set; }
-        [Required]
+        public virtual Category Category { get; set; }
         public string Title { get; set; }
-        [Required]
         public string Author { get; set; }
         public int? Pages { get; set; }
         public int? RunTimeMinutes { get; set; }
-        [Required]
         public bool IsBorrowable { get; set; }
-        [Required]
         public string Barrower { get; set; }
         public DateTime? BarrowDate { get; set; }
-        [Required]
         public string Type { get; set; }
     }
 }

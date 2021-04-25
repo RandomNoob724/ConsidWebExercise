@@ -62,8 +62,10 @@ namespace ConsidWebExercise.Controllers
         public IActionResult Create()
         {
             IEnumerable<Category> categories = _db.Categories;
-            var viewModel = new CreateLibraryItemViewModel();
-            viewModel.Categories = categories.ToList();
+            var viewModel = new CreateLibraryItemViewModel 
+            { 
+                Categories = categories.ToList()
+            };
             return View(viewModel);
         }
 
@@ -71,9 +73,14 @@ namespace ConsidWebExercise.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Create(CreateLibraryItemViewModel obj)
         {
-            _db.Add(obj.LibraryItem);
-            _db.SaveChanges();
-            return RedirectToAction("Index");
+            LibraryItem itemToAdd = obj.LibraryItem;
+            if(itemToAdd != null)
+            {
+                _db.Add(itemToAdd);
+                _db.SaveChanges();
+                return RedirectToAction("Index");
+            }
+            return View(obj);
         }
     }
 }
