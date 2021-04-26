@@ -13,10 +13,25 @@
             <div class="col-8">
                 <div class="form-group row">
                     <div class="col-4">
+                        <label asp-for="LibraryItem.Type"></label>
+                    </div>
+                    <div class="col-8">
+                        <select asp-for="LibraryItem.Type" class="custom-select">
+                            <option value="Book">Book</option>
+                            <option value="DVD">DVD</option>
+                            <option value="Audio Book">Audio Book</option>
+                            <option value="Reference book">Reference Book</option>
+                        </select>
+                        <span asp-validation-for="LibraryItem.Type" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-4">
                         <label asp-for="LibraryItem.CategoryId"></label>
                     </div>
                     <div class="col-8">
-                        <select asp-for="LibraryItem.CategoryId" asp-items="@(new SelectList(Model.Categories,"Id","CategoryName"))">
+                        <select asp-for="LibraryItem.CategoryId" asp-items="@(new SelectList(Model.Categories,"Id","CategoryName"))" class="custom-select">
                         </select>
                         <span asp-validation-for="LibraryItem.CategoryId" class="text-danger"></span>
                     </div>
@@ -89,16 +104,6 @@
                     <div class="col-8">
                         <input asp-for="LibraryItem.BarrowDate" class="form-control" />
                         <span asp-validation-for="LibraryItem.BarrowDate" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="LibraryItem.Type"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="LibraryItem.Type" class="form-control" />
-                        <span asp-validation-for="LibraryItem.Type" class="text-danger"></span>
                     </div>
                 </div>
 

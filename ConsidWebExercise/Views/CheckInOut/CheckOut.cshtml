@@ -1,0 +1,19 @@
+﻿@model LibraryItem
+@{
+    ViewData["Title"] = "CheckOut";
+}
+
+<h1>CheckOut</h1>
+<form method="post" asp-action="CheckOutPost" asp-route-Id="@Model.Id">
+    <input type="hidden" value="@Model" />
+    <div class="form-group row">
+        <div class="col-4">
+            <label asp-for="Barrower"></label>
+        </div>
+        <div class="col-8">
+            <input asp-for="Barrower" class="form-control" />
+            <span asp-validation-for="Barrower" class="text-danger"></span>
+        </div>
+    </div>
+    <button type="submit">Check Out</button>
+</form>
