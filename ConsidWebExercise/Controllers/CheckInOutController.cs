@@ -37,8 +37,8 @@ namespace ConsidWebExercise.Controllers
             if (Id.HasValue)
             {
                 LibraryItem item = _db.LibraryItems.Find(Id);
-                item.BarrowDate = null;
-                item.Barrower = null;
+                item.BorrowDate = null;
+                item.Borrower = null;
                 _db.LibraryItems.Update(item);
                 _db.SaveChanges();
                 return RedirectToAction("Index");
@@ -59,13 +59,13 @@ namespace ConsidWebExercise.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CheckOutPost(int? Id, string barrower)
+        public IActionResult CheckOutPost(int? Id, string borrower)
         {
-            if(Id.HasValue && barrower != null)
+            if(Id.HasValue && borrower != null)
             {
                 LibraryItem item = _db.LibraryItems.Find(Id);
-                item.BarrowDate = DateTime.Now;
-                item.Barrower = barrower;
+                item.BorrowDate = DateTime.Now;
+                item.Borrower = borrower;
 
                 _db.LibraryItems.Update(item);
                 _db.SaveChanges();

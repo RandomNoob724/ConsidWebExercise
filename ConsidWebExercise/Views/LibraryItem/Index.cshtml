@@ -26,26 +26,29 @@
                     <th>Author</th>
                     <th>Pages</th>
                     <th>Run Time Minues</th>
-                    <th>Is Barrowable</th>
-                    <th>Barrower</th>
-                    <th>Barrow Date</th>
+                    <th>Borrowable</th>
+                    <th>Borrower</th>
+                    <th>Borrow Date</th>
                     <th>Type</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
+
                 @foreach (var obj in Model.libraryItems)
                 {
                     <tr>
-                        <td>@obj.Title</td>
+                        <td>
+                            @obj.Title /@string.Join(string.Empty, obj.Title.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s[0])).ToUpper())
+                        </td>
                         <!-- Move this part into the controller for better separation of concerns -->
                         <td>@Model.categories.Where(category => category.Id == obj.CategoryId).First().CategoryName</td>
                         <td>@obj.Author</td>
                         <td>@obj.Pages</td>
                         <td>@obj.RunTimeMinutes</td>
                         <td>@obj.IsBorrowable</td>
-                        <td>@obj.Barrower</td>
-                        <td>@obj.BarrowDate</td>
+                        <td>@obj.Borrower</td>
+                        <td>@obj.BorrowDate</td>
                         <td>@obj.Type</td>
                         <td class="text-center">
                             <div class="w-75 btn-group" role="group">

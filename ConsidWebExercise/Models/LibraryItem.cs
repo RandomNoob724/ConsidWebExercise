@@ -19,8 +19,8 @@ namespace ConsidWebExercise.Models
         public int? Pages { get; set; }
         public int? RunTimeMinutes { get; set; }
         public bool IsBorrowable { get; set; }
-        public string Barrower { get; set; }
-        public DateTime? BarrowDate { get; set; }
+        public string Borrower { get; set; }
+        public DateTime? BorrowDate { get; set; }
         public string Type { get; set; }
     }
 }

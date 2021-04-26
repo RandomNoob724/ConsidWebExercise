@@ -63,9 +63,8 @@ namespace ConsidWebExercise.Controllers
             {
                 _db.Categories.Remove(category);
                 _db.SaveChanges();
-                return RedirectToAction("Index");
             }
-            return RedirectToAction();
+            return RedirectToAction("Index");
         }
 
         // POST: Category/Edit/id

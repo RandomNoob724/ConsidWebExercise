@@ -42,12 +42,12 @@
                         <td>@obj.Pages</td>
                         <td>@obj.RunTimeMinutes</td>
                         <td>@obj.IsBorrowable</td>
-                        <td>@obj.Barrower</td>
-                        <td>@obj.BarrowDate</td>
+                        <td>@obj.Borrower</td>
+                        <td>@obj.BorrowDate</td>
                         <td>@obj.Type</td>
                         <td class="text-center">
                             <div class="w-75 btn-group" role="group">
-                                @if (obj.BarrowDate == null)
+                                @if (obj.BorrowDate == null)
                                 {
                                     <form asp-controller="CheckInOut" asp-action="CheckOut" asp-route-Id="@obj.Id " method="post">
                                         <button class="btn btn-success mx-2" type="submit">Check Out</button>

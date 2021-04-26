@@ -23,7 +23,7 @@ namespace ConsidWebExercise.Controllers
         {
             IEnumerable<LibraryItem> listOfLibraryItems = _db.LibraryItems;
             IEnumerable<Category> categories = _db.Categories;
-            var viewModel = new ListLibraryItemViewModel()
+            var viewModel = new ListLibraryItemViewModel
             {
                 libraryItems = listOfLibraryItems,
                 categories = categories
@@ -36,7 +36,7 @@ namespace ConsidWebExercise.Controllers
             if(id.HasValue)
             {
                 IEnumerable<Category> categories = _db.Categories;
-                var viewModel = new CreateLibraryItemViewModel()
+                var viewModel = new CreateLibraryItemViewModel
                 {
                     LibraryItem = _db.LibraryItems.Find(id),
                     Categories = categories.ToList()
@@ -81,6 +81,19 @@ namespace ConsidWebExercise.Controllers
                 return RedirectToAction("Index");
             }
             return View(obj);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult Delete(int? Id)
+        {
+            if (Id.HasValue)
+            {
+                LibraryItem item = _db.LibraryItems.Find(Id);
+                _db.LibraryItems.Remove(item);
+                _db.SaveChanges();
+            }
+            return RedirectToAction("Index");
         }
     }
 }
