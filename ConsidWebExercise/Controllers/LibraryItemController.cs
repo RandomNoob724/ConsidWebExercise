@@ -19,10 +19,34 @@ namespace ConsidWebExercise.Controllers
         }
 
         // GET: /LibraryItem/Index
-        public IActionResult Index()
+        public IActionResult Index(string? sortingId)
         {
-            IEnumerable<LibraryItem> listOfLibraryItems = _db.LibraryItems;
+            IEnumerable<LibraryItem> listOfLibraryItems = Enumerable.Empty<LibraryItem>();
             IEnumerable<Category> categories = _db.Categories;
+            switch (sortingId)
+            {
+                case "Type":
+                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.Type);
+                    break;
+                case "Author":
+                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.Author);
+                    break;
+                case "Pages":
+                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.Pages);
+                    break;
+                case "RunTimeMinutes":
+                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.RunTimeMinutes);
+                    break;
+                case "Borrowable":
+                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.IsBorrowable);
+                    break;
+                case "Title":
+                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.Title);
+                    break;
+                default:
+                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.Category.CategoryName);
+                    break;
+            }
             var viewModel = new ListLibraryItemViewModel
             {
                 libraryItems = listOfLibraryItems,
@@ -50,7 +74,7 @@ namespace ConsidWebExercise.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult Edit(CreateLibraryItemViewModel obj)
         {
-            if(obj != null)
+            if(obj.LibraryItem != null)
             {
                 _db.LibraryItems.Update(obj.LibraryItem);
                 _db.SaveChanges();
