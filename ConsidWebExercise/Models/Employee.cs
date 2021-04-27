@@ -10,8 +10,11 @@ namespace ConsidWebExercise.Models
     {
         [Key]
         public int Id { get; set; }
+        [Required]
         public string FirstName { get; set; }
+        [Required]
         public string LastName { get; set; }
+        [Required]
         public decimal Salary { get; set; }
         public bool IsCEO { get; set; }
         public bool IsManager { get; set; }
