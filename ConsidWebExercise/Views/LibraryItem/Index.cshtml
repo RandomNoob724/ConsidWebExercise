@@ -53,7 +53,7 @@
                 {
                     <tr>
                         <td>
-                            @obj.Title (@string.Join(string.Empty, obj.Title.Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries).Select(s => s[0])).ToUpper())
+                            @obj.Title
                         </td>
                         <!-- Move this part into the controller for better separation of concerns -->
                         <td>@Model.categories.Where(category => category.Id == obj.CategoryId).First().CategoryName</td>

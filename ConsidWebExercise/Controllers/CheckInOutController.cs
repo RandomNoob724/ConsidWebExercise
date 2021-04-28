@@ -7,21 +7,24 @@ using System.Linq;
 using System.Threading.Tasks;
 using ConsidWebExercise.ViewModels;
 using Microsoft.EntityFrameworkCore;
+using ConsidWebExercise.Repos;
 
 namespace ConsidWebExercise.Controllers
 {
     public class CheckInOutController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        public CheckInOutController(ApplicationDbContext db)
+        private readonly LibraryitemRepository _libraryRepo;
+        private readonly CategoryRepository _categoryRepo;
+        public CheckInOutController(LibraryitemRepository libraryRepo, CategoryRepository categoryRepo)
         {
-            _db = db;
+            _libraryRepo = libraryRepo;
+            _categoryRepo = categoryRepo;
         }
 
         public async Task<IActionResult> Index()
         {
-            IEnumerable<LibraryItem> libraryItems = await _db.LibraryItems.Where(item => item.IsBorrowable == true).ToListAsync();
-            IEnumerable<Category> categories = await _db.Categories.ToListAsync();
+            IEnumerable<LibraryItem> libraryItems = await _libraryRepo.GetBarrowableItems();
+            IEnumerable<Category> categories = await _categoryRepo.GetCategoriesAsync();
             var viewModel = new ListLibraryItemViewModel
             {
                 libraryItems = libraryItems,
@@ -37,11 +40,10 @@ namespace ConsidWebExercise.Controllers
         {
             if (Id.HasValue)
             {
-                LibraryItem item = await _db.LibraryItems.FindAsync(Id);
+                LibraryItem item = await _libraryRepo.GetLibraryItemsById(Id);
                 item.BorrowDate = null;
                 item.Borrower = null;
-                _db.LibraryItems.Update(item);
-                await _db.SaveChangesAsync();
+                await _libraryRepo.UpdateLibraryItem(item);
                 return RedirectToAction("Index");
             }
             return NotFound();
@@ -52,7 +54,7 @@ namespace ConsidWebExercise.Controllers
         {
             if (Id.HasValue)
             {
-                LibraryItem item = await _db.LibraryItems.FindAsync(Id);
+                LibraryItem item = await _libraryRepo.GetLibraryItemsById(Id);
                 return View(item);
             }
             return NotFound();
@@ -64,12 +66,11 @@ namespace ConsidWebExercise.Controllers
         {
             if(Id.HasValue && borrower != null)
             {
-                LibraryItem item = await _db.LibraryItems.FindAsync(Id);
+                LibraryItem item = await _libraryRepo.GetLibraryItemsById(Id);
                 item.BorrowDate = DateTime.Now;
                 item.Borrower = borrower;
 
-                _db.LibraryItems.Update(item);
-                await _db.SaveChangesAsync();
+                await _libraryRepo.UpdateLibraryItem(item);
                 return RedirectToAction("Index");
             }
             return NotFound();

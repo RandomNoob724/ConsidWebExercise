@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ConsidWebExercise.Data;
+using ConsidWebExercise.Repos;
 using ConsidWebExercise.Models;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,15 +11,15 @@ namespace ConsidWebExercise.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly ApplicationDbContext _db;
-        public EmployeeController(ApplicationDbContext db)
+        private readonly EmployeeRepository _employeeRepo;
+        public EmployeeController(EmployeeRepository employeeRepo)
         {
-            _db = db;
+            _employeeRepo = employeeRepo;
         }
 
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Employee> employees = await _db.Employees.ToListAsync();
+            IEnumerable<Employee> employees = await _employeeRepo.GetEmployeesAsync();
             return View(employees);
         }
 
@@ -30,22 +30,21 @@ namespace ConsidWebExercise.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Employee newEmployee)
+        public async Task<IActionResult> Create(Employee employeeToAdd)
         {
             if (ModelState.IsValid)
             {
-                await _db.Employees.AddAsync(newEmployee);
-                await _db.SaveChangesAsync();
+                await _employeeRepo.AddEmployee(employeeToAdd);
                 return RedirectToAction("Index");
             }
-            return View(newEmployee);
+            return View(employeeToAdd);
         }
 
         public async Task<IActionResult> Edit(int? Id)
         {
             if (Id.HasValue)
             {
-                Employee employeeToEdit = await _db.Employees.FindAsync(Id);
+                Employee employeeToEdit = await _employeeRepo.GetEmployeeById(Id);
                 if(employeeToEdit != null)
                 {
                     return View(employeeToEdit);
@@ -60,8 +59,7 @@ namespace ConsidWebExercise.Controllers
         {
             if (ModelState.IsValid)
             {
-                _db.Employees.Update(employee);
-                await _db.SaveChangesAsync();
+                await _employeeRepo.UpdateEmployee(employee);
                 return RedirectToAction("Index");
             }
             return View(employee);
@@ -73,13 +71,12 @@ namespace ConsidWebExercise.Controllers
         {
             if (Id.HasValue)
             {
-                Employee employeeToRemove = await _db.Employees.FindAsync(Id);
+                Employee employeeToRemove = await _employeeRepo.GetEmployeeById(Id);
                 if(employeeToRemove == null)
                 {
                     return NotFound();
                 }
-                _db.Employees.Remove(employeeToRemove);
-                await _db.SaveChangesAsync();
+                await _employeeRepo.RemoveEmployee(employeeToRemove);
                 return RedirectToAction("Index");
             }
             return NotFound();
