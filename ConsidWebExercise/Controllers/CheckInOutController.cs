@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ConsidWebExercise.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsidWebExercise.Controllers
 {
@@ -17,10 +18,10 @@ namespace ConsidWebExercise.Controllers
             _db = db;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<LibraryItem> libraryItems = _db.LibraryItems.Where(item => item.IsBorrowable == true);
-            IEnumerable<Category> categories = _db.Categories;
+            IEnumerable<LibraryItem> libraryItems = await _db.LibraryItems.Where(item => item.IsBorrowable == true).ToListAsync();
+            IEnumerable<Category> categories = await _db.Categories.ToListAsync();
             var viewModel = new ListLibraryItemViewModel
             {
                 libraryItems = libraryItems,
@@ -32,26 +33,26 @@ namespace ConsidWebExercise.Controllers
         // POST: /checkinout/checkin/id
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CheckIn(int? Id)
+        public async Task<IActionResult> CheckIn(int? Id)
         {
             if (Id.HasValue)
             {
-                LibraryItem item = _db.LibraryItems.Find(Id);
+                LibraryItem item = await _db.LibraryItems.FindAsync(Id);
                 item.BorrowDate = null;
                 item.Borrower = null;
                 _db.LibraryItems.Update(item);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return NotFound();
         }
 
         // GET: /checkinout/checkout
-        public IActionResult CheckOut(int? Id)
+        public async Task<IActionResult> CheckOut(int? Id)
         {
             if (Id.HasValue)
             {
-                LibraryItem item = _db.LibraryItems.Find(Id);
+                LibraryItem item = await _db.LibraryItems.FindAsync(Id);
                 return View(item);
             }
             return NotFound();
@@ -59,16 +60,16 @@ namespace ConsidWebExercise.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult CheckOutPost(int? Id, string borrower)
+        public async Task<IActionResult> CheckOutPost(int? Id, string borrower)
         {
             if(Id.HasValue && borrower != null)
             {
-                LibraryItem item = _db.LibraryItems.Find(Id);
+                LibraryItem item = await _db.LibraryItems.FindAsync(Id);
                 item.BorrowDate = DateTime.Now;
                 item.Borrower = borrower;
 
                 _db.LibraryItems.Update(item);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return NotFound();

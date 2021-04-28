@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ConsidWebExercise.Data;
 using ConsidWebExercise.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsidWebExercise.Controllers
 {
@@ -16,9 +17,9 @@ namespace ConsidWebExercise.Controllers
             _db = db;
         }
 
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Employee> employees = _db.Employees;
+            IEnumerable<Employee> employees = await _db.Employees.ToListAsync();
             return View(employees);
         }
 
@@ -29,22 +30,22 @@ namespace ConsidWebExercise.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Employee newEmployee)
+        public async Task<IActionResult> Create(Employee newEmployee)
         {
             if (ModelState.IsValid)
             {
-                _db.Employees.Add(newEmployee);
-                _db.SaveChanges();
+                await _db.Employees.AddAsync(newEmployee);
+                await _db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(newEmployee);
         }
 
-        public IActionResult Edit(int? Id)
+        public async Task<IActionResult> Edit(int? Id)
         {
             if (Id.HasValue)
             {
-                Employee employeeToEdit = _db.Employees.Find(Id);
+                Employee employeeToEdit = await _db.Employees.FindAsync(Id);
                 if(employeeToEdit != null)
                 {
                     return View(employeeToEdit);
@@ -55,12 +56,12 @@ namespace ConsidWebExercise.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Employee employee)
+        public async Task<IActionResult> Edit(Employee employee)
         {
             if (ModelState.IsValid)
             {
                 _db.Employees.Update(employee);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(employee);
@@ -68,17 +69,17 @@ namespace ConsidWebExercise.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int? Id)
+        public async Task<IActionResult> Delete(int? Id)
         {
             if (Id.HasValue)
             {
-                Employee employeeToRemove = _db.Employees.Find(Id);
+                Employee employeeToRemove = await _db.Employees.FindAsync(Id);
                 if(employeeToRemove == null)
                 {
                     return NotFound();
                 }
                 _db.Employees.Remove(employeeToRemove);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return NotFound();

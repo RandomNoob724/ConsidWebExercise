@@ -8,9 +8,9 @@
         <div class="col-4">
             <h2 class="text-primary">Library Item List</h2>
         </div>
-        <div class="col-2">
+        <div class="col-4">
             <form asp-action="Index" method="get">
-                <select name="sortingId" class="form-select" aria-label="Default select example">
+                <select name="sortingId" class="form-select custom-select" aria-label="Default select example">
                     <option selected>Sort by</option>
                     <option value="Title">Title</option>
                     <option value="Category">Category</option>
@@ -20,11 +20,11 @@
                     <option value="Borrowable">Barrowable</option>
                     <option value="Type">Type</option>
                 </select>
-                <button type="submit">Sort</button>
+                <button type="submit" class="btn btn-info">Sort</button>
             </form>
 
         </div>
-        <div class="col-6 text-right">
+        <div class="col-4 text-right">
             <a asp-controller="LibraryItem" asp-action="Create" class="btn btn-primary">Create New Library Item</a>
         </div>
     </div>
@@ -35,9 +35,7 @@
         <table class="table table-bordered table-striped" style="width:100%">
             <thead>
                 <tr>
-                    <th>
-                        Title
-                    </th>
+                    <th>Title</th>
                     <th>Category</th>
                     <th>Author</th>
                     <th>Pages</th>

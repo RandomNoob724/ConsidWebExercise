@@ -19,16 +19,16 @@ namespace ConsidWebExercise.Controllers
         }
 
         // GET: Category/Index
-        public IActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            IEnumerable<Category> categoryList = _db.Categories;
+            IEnumerable<Category> categoryList = await _db.Categories.ToListAsync();
             return View(categoryList);
         }
 
         // GET: Category/Edit
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
-            Category categoryObj = _db.Categories.Find(id);
+            Category categoryObj = await _db.Categories.FindAsync(id);
             return View(categoryObj);
         }
 
@@ -41,12 +41,12 @@ namespace ConsidWebExercise.Controllers
         // POST: Category/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Category categoryObj)
+        public async Task<IActionResult> Create(Category categoryObj)
         {
             if (ModelState.IsValid)
             {
-                _db.Add(categoryObj);
-                _db.SaveChanges();
+                await _db.AddAsync(categoryObj);
+                await _db.SaveChangesAsync();
                 return Redirect("Index");
             }
             return View(categoryObj);
@@ -55,14 +55,14 @@ namespace ConsidWebExercise.Controllers
         // POST: Category/Delete/id
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int? id)
+        public async Task<IActionResult> Delete(int? id)
         {
             // Add check if the category is refeered to in any of the library items
-            Category category = _db.Categories.Find(id);
+            Category category = await _db.Categories.FindAsync(id);
             if(_db.LibraryItems.Where(item => item.CategoryId == category.Id).FirstOrDefault() == null && category != null)
             {
                 _db.Categories.Remove(category);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return RedirectToAction("Index");
@@ -71,12 +71,12 @@ namespace ConsidWebExercise.Controllers
         // POST: Category/Edit/id
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(Category categoryObj)
+        public async Task<IActionResult> Edit(Category categoryObj)
         {
             if (ModelState.IsValid)
             {
                 _db.Categories.Update(categoryObj);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(categoryObj);

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ConsidWebExercise.ViewModels;
+using Microsoft.EntityFrameworkCore;
 
 namespace ConsidWebExercise.Controllers
 {
@@ -19,32 +20,32 @@ namespace ConsidWebExercise.Controllers
         }
 
         // GET: /LibraryItem/Index
-        public IActionResult Index(string? sortingId)
+        public async Task<IActionResult> Index(string? sortingId)
         {
             IEnumerable<LibraryItem> listOfLibraryItems = Enumerable.Empty<LibraryItem>();
-            IEnumerable<Category> categories = _db.Categories;
+            IEnumerable<Category> categories = await _db.Categories.ToListAsync();
             switch (sortingId)
             {
                 case "Type":
-                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.Type);
+                    listOfLibraryItems = await _db.LibraryItems.OrderBy(item => item.Type).ToListAsync();
                     break;
                 case "Author":
-                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.Author);
+                    listOfLibraryItems = await _db.LibraryItems.OrderBy(item => item.Author).ToListAsync();
                     break;
                 case "Pages":
-                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.Pages);
+                    listOfLibraryItems = await _db.LibraryItems.OrderBy(item => item.Pages).ToListAsync();
                     break;
                 case "RunTimeMinutes":
-                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.RunTimeMinutes);
+                    listOfLibraryItems = await _db.LibraryItems.OrderBy(item => item.RunTimeMinutes).ToListAsync();
                     break;
                 case "Borrowable":
-                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.IsBorrowable);
+                    listOfLibraryItems = await _db.LibraryItems.OrderBy(item => item.IsBorrowable).ToListAsync();
                     break;
                 case "Title":
-                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.Title);
+                    listOfLibraryItems = await _db.LibraryItems.OrderBy(item => item.Title).ToListAsync();
                     break;
                 default:
-                    listOfLibraryItems = _db.LibraryItems.OrderBy(item => item.Category.CategoryName);
+                    listOfLibraryItems = await _db.LibraryItems.OrderBy(item => item.Category.CategoryName).ToListAsync();
                     break;
             }
             var viewModel = new ListLibraryItemViewModel
@@ -55,14 +56,14 @@ namespace ConsidWebExercise.Controllers
             return View(viewModel);
         }
 
-        public IActionResult Edit(int? id)
+        public async Task<IActionResult> Edit(int? id)
         {
             if(id.HasValue)
             {
-                IEnumerable<Category> categories = _db.Categories;
+                IEnumerable<Category> categories = await _db.Categories.ToListAsync();
                 var viewModel = new CreateLibraryItemViewModel
                 {
-                    LibraryItem = _db.LibraryItems.Find(id),
+                    LibraryItem = await _db.LibraryItems.FindAsync(id),
                     Categories = categories.ToList()
                 };
                 return View(viewModel);
@@ -72,20 +73,20 @@ namespace ConsidWebExercise.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(CreateLibraryItemViewModel obj)
+        public async Task<IActionResult> Edit(CreateLibraryItemViewModel obj)
         {
             if(obj.LibraryItem != null)
             {
                 _db.LibraryItems.Update(obj.LibraryItem);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(obj);
         }
 
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            IEnumerable<Category> categories = _db.Categories;
+            IEnumerable<Category> categories = await _db.Categories.ToListAsync();
             var viewModel = new CreateLibraryItemViewModel 
             { 
                 Categories = categories.ToList()
@@ -95,13 +96,13 @@ namespace ConsidWebExercise.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(CreateLibraryItemViewModel obj)
+        public async Task<IActionResult> Create(CreateLibraryItemViewModel obj)
         {
             LibraryItem itemToAdd = obj.LibraryItem;
             if(itemToAdd != null)
             {
-                _db.Add(itemToAdd);
-                _db.SaveChanges();
+                await _db.AddAsync(itemToAdd);
+                await _db.SaveChangesAsync();
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -109,13 +110,13 @@ namespace ConsidWebExercise.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Delete(int? Id)
+        public async Task<IActionResult> Delete(int? Id)
         {
             if (Id.HasValue)
             {
-                LibraryItem item = _db.LibraryItems.Find(Id);
+                LibraryItem item = await _db.LibraryItems.FindAsync(Id);
                 _db.LibraryItems.Remove(item);
-                _db.SaveChanges();
+                await _db.SaveChangesAsync();
             }
             return RedirectToAction("Index");
         }
