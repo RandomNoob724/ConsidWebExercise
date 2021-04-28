@@ -24,7 +24,7 @@ namespace ConsidWebExercise.Controllers
         // GET: /LibraryItem/Index
         public async Task<IActionResult> Index(string? sortingId)
         {
-            IEnumerable<LibraryItem> listOfLibraryItems = await _libraryRepo.GetLibraryItemsAsync();
+            IEnumerable<LibraryItem> listOfLibraryItems = await _libraryRepo.GetLibraryItemsSortedBy(sortingId);
             IEnumerable<Category> categories = await _categoryRepository.GetCategoriesAsync();
             var viewModel = new ListLibraryItemViewModel
             {
