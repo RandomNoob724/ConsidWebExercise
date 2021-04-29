@@ -1,11 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using ConsidWebExercise.Repos;
 using ConsidWebExercise.Models;
-using Microsoft.EntityFrameworkCore;
 
 namespace ConsidWebExercise.Controllers
 {
@@ -17,17 +14,20 @@ namespace ConsidWebExercise.Controllers
             _employeeRepo = employeeRepo;
         }
 
+        // GET: /Employee/Index
         public async Task<IActionResult> Index()
         {
             IEnumerable<Employee> employees = await _employeeRepo.GetEmployeesAsync();
             return View(employees);
         }
 
+        // GET: /Employee/Create
         public IActionResult Create()
         {
             return View();
         }
 
+        // POST: /Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Employee employeeToAdd)
@@ -40,6 +40,7 @@ namespace ConsidWebExercise.Controllers
             return View(employeeToAdd);
         }
 
+        // GET: /Employee/Edit/id
         public async Task<IActionResult> Edit(int? Id)
         {
             if (Id.HasValue)
@@ -53,6 +54,7 @@ namespace ConsidWebExercise.Controllers
             return NotFound();
         }
 
+        // POST: /Employee/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(Employee employee)
@@ -65,6 +67,7 @@ namespace ConsidWebExercise.Controllers
             return View(employee);
         }
 
+        // POST: /Employee/Delete/id
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? Id)

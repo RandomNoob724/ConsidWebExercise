@@ -21,19 +21,43 @@ namespace ConsidWebExercise.Controllers
             _categoryRepository = categoryRepository;
         }
 
-        // GET: /LibraryItem/Index
+        private async Task<List<string>> GetAcronym(IEnumerable<LibraryItem> items)
+        {
+            List<string> acronymsToReturn = new List<string>();
+            await Task.Run(() =>
+            {
+                foreach (var item in items)
+                {
+                    string toAppend = "";
+                    MatchCollection matches = Regex.Matches(item.Title, @"\b[a-zA-Z0-9]");
+                    foreach(var match in matches)
+                    {
+                        toAppend += match.ToString();
+                    }
+                    acronymsToReturn.Add(toAppend);
+                    toAppend = "";
+                }
+            });
+            return acronymsToReturn;
+        }
+
+        // GET: /LibraryItem/Index?sortingId
+        // Default sorting will be Category
         public async Task<IActionResult> Index(string? sortingId)
         {
             IEnumerable<LibraryItem> listOfLibraryItems = await _libraryRepo.GetLibraryItemsSortedBy(sortingId);
             IEnumerable<Category> categories = await _categoryRepository.GetCategoriesAsync();
+            List<string> acronyms = await GetAcronym(listOfLibraryItems);
             var viewModel = new ListLibraryItemViewModel
             {
                 libraryItems = listOfLibraryItems,
                 categories = categories,
+                acronyms = acronyms
             };
             return View(viewModel);
         }
 
+        // GET: /LibraryItem/Edit/id
         public async Task<IActionResult> Edit(int? id)
         {
             if(id.HasValue)
@@ -49,6 +73,7 @@ namespace ConsidWebExercise.Controllers
             return NotFound();
         }
 
+        // POST: /LibraryItem/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CreateLibraryItemViewModel obj)
@@ -61,6 +86,7 @@ namespace ConsidWebExercise.Controllers
             return View(obj);
         }
 
+        // GET: /LibraryItem/Create
         public async Task<IActionResult> Create()
         {
             IEnumerable<Category> categories = await _categoryRepository.GetCategoriesAsync();
@@ -71,6 +97,7 @@ namespace ConsidWebExercise.Controllers
             return View(viewModel);
         }
 
+        // POST: /LibraryItem/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateLibraryItemViewModel obj)
@@ -84,6 +111,7 @@ namespace ConsidWebExercise.Controllers
             return View(obj);
         }
 
+        // POST: /LibraryItem/Delete/id
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? Id)

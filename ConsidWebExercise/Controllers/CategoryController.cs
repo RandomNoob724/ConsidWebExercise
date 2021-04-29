@@ -61,7 +61,7 @@ namespace ConsidWebExercise.Controllers
         {
             Category category = await _categoryRepo.GetCategoryById(id);
             IEnumerable<LibraryItem> itemsWithCategory = await _libraryItemRepo.GetLibraryItemsWithCategoryId(id);
-            if (itemsWithCategory.Count() > 0 && category != null)
+            if (itemsWithCategory.Count() == 0 && category != null)
             {
                 await _categoryRepo.RemoveCategory(category);
                 return RedirectToAction("Index");

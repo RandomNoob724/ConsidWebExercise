@@ -11,5 +11,6 @@ namespace ConsidWebExercise.ViewModels
     {
         public IEnumerable<LibraryItem> libraryItems{ get; set; }
         public IEnumerable<Category> categories { get; set; }
+        public List<string> acronyms { get; set; }
     }
 }
