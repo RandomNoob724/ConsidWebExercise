@@ -16,5 +16,6 @@
 
   <ItemGroup>
     <Folder Include="Repos\" />
+    <Folder Include="BLL\" />
   </ItemGroup>
 </Project>

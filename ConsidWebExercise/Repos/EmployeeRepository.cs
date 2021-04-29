@@ -43,5 +43,15 @@ namespace ConsidWebExercise.Repos
             _db.Update(employee);
             await _db.SaveChangesAsync();
         }
+
+        public async Task<IEnumerable<Employee>> GetCEO()
+        {
+            return await _db.Employees.Where(employee => employee.IsCEO == true).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Employee>> GetManagers()
+        {
+            return await _db.Employees.Where(employee => employee.IsManager == true).ToListAsync();
+        }
     }
 }

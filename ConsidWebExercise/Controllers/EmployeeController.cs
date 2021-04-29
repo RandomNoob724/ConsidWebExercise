@@ -3,41 +3,49 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using ConsidWebExercise.Repos;
 using ConsidWebExercise.Models;
+using ConsidWebExercise.BLL;
+using ConsidWebExercise.ViewModels;
 
 namespace ConsidWebExercise.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly EmployeeRepository _employeeRepo;
-        public EmployeeController(EmployeeRepository employeeRepo)
+        private readonly EmployeeBusinessLogic _employeeBusinessLogic;
+
+        public EmployeeController(EmployeeBusinessLogic employeeBusinessLogic)
         {
-            _employeeRepo = employeeRepo;
+            _employeeBusinessLogic = employeeBusinessLogic;
         }
 
         // GET: /Employee/Index
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Employee> employees = await _employeeRepo.GetEmployeesAsync();
-            return View(employees);
+            return View(await _employeeBusinessLogic.GetAllEmployeesAsync());
         }
 
         // GET: /Employee/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
-            return View();
+            var viewModel = new CreateEmployeeViewModel
+            {
+                managers = await _employeeBusinessLogic.GetManagers()
+            };
+            return View(viewModel);
         }
 
         // POST: /Employee/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Employee employeeToAdd)
+        public async Task<IActionResult> Create(CreateEmployeeViewModel employeeModel)
         {
             if (ModelState.IsValid)
             {
-                await _employeeRepo.AddEmployee(employeeToAdd);
-                return RedirectToAction("Index");
+                if(await _employeeBusinessLogic.CreateNewEmployee(employeeModel.employeeToAdd))
+                {
+                    return RedirectToAction("Index");
+                }
             }
-            return View(employeeToAdd);
+            return View(employeeModel);
         }
 
         // GET: /Employee/Edit/id
@@ -45,13 +53,13 @@ namespace ConsidWebExercise.Controllers
         {
             if (Id.HasValue)
             {
-                Employee employeeToEdit = await _employeeRepo.GetEmployeeById(Id);
+                Employee employeeToEdit = await _employeeBusinessLogic.GetEmployeeById(Id);
                 if(employeeToEdit != null)
                 {
                     return View(employeeToEdit);
                 }
             }
-            return NotFound();
+            return RedirectToAction("Index");
         }
 
         // POST: /Employee/Edit
@@ -61,7 +69,7 @@ namespace ConsidWebExercise.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _employeeRepo.UpdateEmployee(employee);
+                await _employeeBusinessLogic.UpdateEmployeeInfo(employee);
                 return RedirectToAction("Index");
             }
             return View(employee);
@@ -74,15 +82,12 @@ namespace ConsidWebExercise.Controllers
         {
             if (Id.HasValue)
             {
-                Employee employeeToRemove = await _employeeRepo.GetEmployeeById(Id);
-                if(employeeToRemove == null)
+                if(await _employeeBusinessLogic.RemoveEmployee(Id))
                 {
-                    return NotFound();
+                    return RedirectToAction("Index");
                 }
-                await _employeeRepo.RemoveEmployee(employeeToRemove);
-                return RedirectToAction("Index");
             }
-            return NotFound();
+            return RedirectToAction("Index");
         }
     }
 }

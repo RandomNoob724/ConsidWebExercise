@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using ConsidWebExercise.Repos;
+using ConsidWebExercise.BLL;
 
 namespace ConsidWebExercise
 {
@@ -24,6 +25,8 @@ namespace ConsidWebExercise
         {
             services.AddScoped<LibraryitemRepository>();
             services.AddScoped<CategoryRepository>();
+            services.AddScoped<EmployeeRepository>();
+            services.AddScoped<EmployeeBusinessLogic>();
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite(
                 Configuration.GetConnectionString("DefaultDatabaseConnection")));

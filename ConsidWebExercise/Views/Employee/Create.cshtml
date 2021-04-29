@@ -1,4 +1,4 @@
-﻿@model Employee
+﻿@model ConsidWebExercise.ViewModels.CreateEmployeeViewModel
 @{
     ViewData["Title"] = "Add new employee";
 }
@@ -13,61 +13,62 @@
             <div class="col-8">
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="FirstName"></label>
+                        <label asp-for="@Model.employeeToAdd.FirstName"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="FirstName" class="form-control" />
-                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                        <input asp-for="@Model.employeeToAdd.FirstName" class="form-control" />
+                        <span asp-validation-for="@Model.employeeToAdd.FirstName" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="LastName"></label>
+                        <label asp-for="@Model.employeeToAdd.LastName"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="LastName" class="form-control" />
-                        <span asp-validation-for="LastName" class="text-danger"></span>
+                        <input asp-for="@Model.employeeToAdd.LastName" class="form-control" />
+                        <span asp-validation-for="@Model.employeeToAdd.LastName" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="Salary"></label>
+                        <label asp-for="@Model.employeeToAdd.Salary"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="Salary" class="form-control" />
-                        <span asp-validation-for="Salary" class="text-danger"></span>
+                        <input asp-for="@Model.employeeToAdd.Salary" class="form-control" />
+                        <span asp-validation-for="@Model.employeeToAdd.Salary" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="IsCEO"></label>
+                        <label asp-for="@Model.employeeToAdd.IsCEO"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="IsCEO" class="form-control" />
-                        <span asp-validation-for="IsCEO" class="text-danger"></span>
+                        <input asp-for="@Model.employeeToAdd.IsCEO" class="form-control" />
+                        <span asp-validation-for="@Model.employeeToAdd.IsCEO" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="IsManager"></label>
+                        <label asp-for="@Model.employeeToAdd.IsManager"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="IsManager" class="form-control" />
-                        <span asp-validation-for="IsManager" class="text-danger"></span>
+                        <input asp-for="@Model.employeeToAdd.IsManager" class="form-control" />
+                        <span asp-validation-for="@Model.employeeToAdd.IsManager" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="ManagerId"></label>
+                        <label asp-for="@Model.employeeToAdd.ManagerId"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="ManagerId" class="form-control" />
-                        <span asp-validation-for="ManagerId" class="text-danger"></span>
+                        <select asp-for="@Model.employeeToAdd.ManagerId" asp-items="@(new SelectList(Model.managers,"Id","FirstName"))" class="custom-select">
+                        </select>
+                        <span asp-validation-for="@Model.employeeToAdd.ManagerId" class="text-danger"></span>
                     </div>
                 </div>
 
