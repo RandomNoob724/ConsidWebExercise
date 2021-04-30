@@ -6,32 +6,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ConsidWebExercise.Repos;
+using ConsidWebExercise.BLL;
 
 namespace ConsidWebExercise.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly CategoryRepository _categoryRepo;
-        private readonly LibraryitemRepository _libraryItemRepo;
+        private readonly CategoryBusinessLogic _categoryBll;
 
-        public CategoryController(CategoryRepository categoryRepo, LibraryitemRepository libraryitemRepo)
+        public CategoryController(CategoryBusinessLogic categoryBll)
         {
-            _categoryRepo = categoryRepo;
-            _libraryItemRepo = libraryitemRepo;
+            _categoryBll = categoryBll;
         }
 
         // GET: Category/Index
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Category> categoryList = await _categoryRepo.GetCategoriesAsync();
+            IEnumerable<Category> categoryList = await _categoryBll.GetAllCategoriesAsync();
             return View(categoryList);
         }
 
         // GET: Category/Edit
         public async Task<IActionResult> Edit(int? id)
         {
-            Category categoryObj = await _categoryRepo.GetCategoryById(id);
+            Category categoryObj = await _categoryBll.GetCategoryById(id);
             return View(categoryObj);
         }
 
@@ -48,7 +46,7 @@ namespace ConsidWebExercise.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _categoryRepo.AddCategory(categoryObj);
+                await _categoryBll.AddNewCategory(categoryObj);
                 return Redirect("Index");
             }
             return View(categoryObj);
@@ -59,13 +57,8 @@ namespace ConsidWebExercise.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
-            Category category = await _categoryRepo.GetCategoryById(id);
-            IEnumerable<LibraryItem> itemsWithCategory = await _libraryItemRepo.GetLibraryItemsWithCategoryId(id);
-            if (itemsWithCategory.Count() == 0 && category != null)
-            {
-                await _categoryRepo.RemoveCategory(category);
-                return RedirectToAction("Index");
-            }
+            Category category = await _categoryBll.GetCategoryById(id);
+            await _categoryBll.RemoveCategory(category);
             return RedirectToAction("Index");
         }
 
@@ -76,7 +69,7 @@ namespace ConsidWebExercise.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _categoryRepo.UpdateCategory(categoryObj);
+                await _categoryBll.UpdateCategory(categoryObj);
                 return RedirectToAction("Index");
             }
             return View(categoryObj);

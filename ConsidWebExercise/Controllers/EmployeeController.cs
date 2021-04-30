@@ -1,7 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using ConsidWebExercise.Repos;
 using ConsidWebExercise.Models;
 using ConsidWebExercise.BLL;
 using ConsidWebExercise.ViewModels;
@@ -45,6 +43,7 @@ namespace ConsidWebExercise.Controllers
                     return RedirectToAction("Index");
                 }
             }
+            employeeModel.managers = await _employeeBusinessLogic.GetManagers();
             return View(employeeModel);
         }
 

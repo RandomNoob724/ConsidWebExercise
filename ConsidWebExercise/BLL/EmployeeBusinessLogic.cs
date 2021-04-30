@@ -22,60 +22,94 @@ namespace ConsidWebExercise.BLL
 
         public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
         {
-            return await _employeeRepo.GetEmployeesAsync();
+            try
+            {
+                return await _employeeRepo.GetEmployeesAsync();
+            } catch(Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
 
         public async Task<Employee> GetEmployeeById(int? id)
         {
-            return await _employeeRepo.GetEmployeeById(id);
+            try
+            {
+                return await _employeeRepo.GetEmployeeById(id);
+            } catch(Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
 
         public async Task<IEnumerable<Employee>> GetManagers()
         {
-            return await _employeeRepo.GetManagers();
+            try
+            {
+                return await _employeeRepo.GetManagers();
+            } catch(Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
 
         public async Task UpdateEmployeeInfo(Employee employee)
         {
-            await _employeeRepo.UpdateEmployee(employee);
+            try
+            {
+                await _employeeRepo.UpdateEmployee(employee);
+            } catch(Exception e)
+            {
+                throw new Exception(e.Message);
+            }
         }
 
-        public async Task<bool> RemoveEmployee(int? employeeId)
+        public async Task RemoveEmployee(int? employeeId)
         {
-            Employee employeeToRemove = await GetEmployeeById(employeeId);
-            if (employeeToRemove == null)
+            try
             {
-                return false;
-            }
-            else
-            {
-                await _employeeRepo.RemoveEmployee(employeeToRemove);
-            }
-            return true;
-        }
-
-        public async Task<bool> CreateNewEmployee(Employee employee)
-        {
-            //Instead of returning false return something more useful for the user to see
-            IEnumerable<Employee> CEO = await _employeeRepo.GetCEO();
-            if (employee.IsCEO)
-            {
-                if(CEO.Count() > 0)
+                Employee employeeToRemove = await GetEmployeeById(employeeId);
+                if (employeeToRemove == null)
                 {
-                    return false;
+                    throw new Exception("Cannot remove employee with no data");
                 }
-            }
-            if (employee.IsCEO && employee.IsManager)
+                else
+                {
+                    await _employeeRepo.RemoveEmployee(employeeToRemove);
+                }
+            } catch(Exception e)
             {
-                return false;
+                throw new Exception(e.Message);
             }
-            if (!employee.IsCEO && !employee.IsManager && employee.ManagerId == null)
+        }
+
+        public async Task CreateNewEmployee(Employee employee)
+        {
+            try
             {
-                return false;
+                //Instead of returning false return something more useful for the user to see
+                IEnumerable<Employee> CEO = await _employeeRepo.GetCEO();
+                if (employee.IsCEO)
+                {
+                    if (CEO.Count() > 0)
+                    {
+                        throw new Exception("You can only have one CEO at a time");
+                    }
+                }
+                if (employee.IsCEO && employee.IsManager)
+                {
+                    throw new Exception("Cannot assing both CEO and Manager role to a single employee");
+                }
+                if (!employee.IsCEO && !employee.IsManager && employee.ManagerId == null)
+                {
+                    throw new Exception("When creating a new employee you need to assign a manager");
+                }
+                CalculateSalary(employee);
+                await _employeeRepo.AddEmployee(employee);
+            } catch(Exception e)
+            {
+                throw new Exception(e.Message);
             }
-            CalculateSalary(employee);
-            await _employeeRepo.AddEmployee(employee);
-            return true;
         }
 
         private void CalculateSalary(Employee employee)
