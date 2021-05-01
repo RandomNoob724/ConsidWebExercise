@@ -57,7 +57,7 @@ namespace ConsidWebExercise.Controllers
                     ModelState.AddModelError("", e.Message);
                 }
             }
-            return View();
+            return RedirectToAction("Index");
         }
 
         // POST: /LibraryItem/Edit

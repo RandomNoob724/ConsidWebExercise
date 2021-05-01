@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using ConsidWebExercise.Models;
 using ConsidWebExercise.BLL;
 using System;
+using System.Collections.Generic;
 
 namespace ConsidWebExercise.Controllers
 {
@@ -50,11 +51,12 @@ namespace ConsidWebExercise.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateEmployeeViewModel employeeModel)
         {
+            employeeModel.managers = await _employeeBusinessLogic.GetManagers();
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _employeeBusinessLogic.CreateNewEmployee(employeeModel.employeeToAdd);
+                    await _employeeBusinessLogic.CreateNewEmployee(employeeModel.employeeToAdd, employeeModel.rank);
                     return RedirectToAction("Index");
                 } catch(AggregateException e)
                 {
@@ -62,7 +64,6 @@ namespace ConsidWebExercise.Controllers
                     {
                         ModelState.AddModelError(" ", exception.Message);
                     }
-                    employeeModel.managers = await _employeeBusinessLogic.GetManagers();
                     return View(employeeModel);
                 }
             }
@@ -78,9 +79,16 @@ namespace ConsidWebExercise.Controllers
             if (Id.HasValue)
             {
                 Employee employeeToEdit = await _employeeBusinessLogic.GetEmployeeById(Id);
+                IEnumerable<Employee> managers = await _employeeBusinessLogic.GetManagers();
+                var viewModel = new CreateEmployeeViewModel
+                {
+                    employeeToAdd = employeeToEdit,
+                    managers = managers,
+                };
+
                 if(employeeToEdit != null)
                 {
-                    return View(employeeToEdit);
+                    return View(viewModel);
                 }
             }
             return RedirectToAction("Index");
@@ -89,13 +97,14 @@ namespace ConsidWebExercise.Controllers
         // POST: /Employee/Edit
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(Employee employee)
+        public async Task<IActionResult> Edit(CreateEmployeeViewModel employeeModel)
         {
+            employeeModel.managers = await _employeeBusinessLogic.GetManagers();
             if (ModelState.IsValid)
             {
                 try
                 {
-                    await _employeeBusinessLogic.UpdateEmployeeInfo(employee);
+                    await _employeeBusinessLogic.UpdateEmployeeInfo(employeeModel.employeeToAdd, employeeModel.rank);
                     return RedirectToAction("Index");
                 } catch(AggregateException e)
                 {
@@ -103,10 +112,10 @@ namespace ConsidWebExercise.Controllers
                     {
                         ModelState.AddModelError(" ", exception.Message);
                     }
-                    return View(employee);
+                    return View(employeeModel);
                 }
             }
-            return View(employee);
+            return View(employeeModel);
         }
 
         // POST: /Employee/Delete/id

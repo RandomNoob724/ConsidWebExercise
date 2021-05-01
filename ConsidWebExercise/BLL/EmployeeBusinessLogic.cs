@@ -9,9 +9,6 @@ namespace ConsidWebExercise.BLL
 {
     public class EmployeeBusinessLogic
     {
-        const decimal EMPLOYEE_COEFICIENT = 1.125M;
-        const decimal MANAGER_COEFICIENT = 1.725M;
-        const decimal CEO_COEFICIENT = 2.725M;
 
         private readonly EmployeeRepository _employeeRepo;
 
@@ -53,15 +50,16 @@ namespace ConsidWebExercise.BLL
             }
         }
 
-        public async Task UpdateEmployeeInfo(Employee employee)
+        public async Task UpdateEmployeeInfo(Employee employee, int rank)
         {
             try
             {
-                await ValidateEmployee(employee);
+                employee.Validate(await _employeeRepo.GetCEO());
+                employee.CalculateSalary(rank);
                 await _employeeRepo.UpdateEmployee(employee);
             } catch(AggregateException e)
             {
-                throw e;
+                throw;
             }
         }
 
@@ -80,40 +78,25 @@ namespace ConsidWebExercise.BLL
                 }
             } catch(Exception e)
             {
-                throw new Exception(e.Message);
+                throw;
             }
         }
 
-        public async Task CreateNewEmployee(Employee employee)
+        public async Task CreateNewEmployee(Employee employee, int rank)
         {
             try
             {
-                await ValidateEmployee(employee);
-                CalculateSalary(employee);
+                employee.Validate(await _employeeRepo.GetCEO());
+                employee.CalculateSalary(rank);
                 await _employeeRepo.AddEmployee(employee);
             } catch(AggregateException e)
             {
-                throw e;
+                throw;
             }
         }
 
-        private void CalculateSalary(Employee employee)
-        {
-            if (employee.IsCEO)
-            {
-                employee.Salary *= CEO_COEFICIENT;
-            }
-            else if (employee.IsManager)
-            {
-                employee.Salary *= MANAGER_COEFICIENT;
-            }
-            else
-            {
-                employee.Salary *= EMPLOYEE_COEFICIENT;
-            }
-        }
-
-        private async Task ValidateEmployee(Employee employee)
+        //Validating the employee model according to the instructions given.
+        /*private async Task ValidateEmployee(Employee employee)
         {
             try
             {
@@ -134,16 +117,27 @@ namespace ConsidWebExercise.BLL
                 {
                     errorList.Add(new ArgumentException("When creating a new employee you need to assign a manager"));
                 }
+                if (employee.IsManager && employee.ManagerId == employee.Id)
+                {
+                    errorList.Add(new ArgumentException("Manager can not be their own manager"));
+                }
+                if(employee.IsManager == false && employee.ManagerId == CEO.First().Id)
+                {
+                    errorList.Add(new ArgumentException("CEO are not allowed to be manager for employees"));
+                }
+                if(employee.IsCEO && employee.ManagerId != null)
+                {
+                    errorList.Add(new ArgumentException("CEO are not allowed to have a manager"));
+                }
                 if (errorList.Count() > 0)
                 {
                     throw new AggregateException(errorList);
                 }
-                CalculateSalary(employee);
             }
             catch (AggregateException e)
             {
-                throw e;
+                throw;
             }
-        }
+        }*/
     }
 }

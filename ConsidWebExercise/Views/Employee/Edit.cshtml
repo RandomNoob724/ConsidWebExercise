@@ -1,75 +1,77 @@
-﻿@model Employee
+﻿@model CreateEmployeeViewModel
 @{
     ViewData["Title"] = "Edit";
 }
 
 <h1>Edit</h1>
 <form method="post" asp-action="Edit">
-    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="employeeToAdd.Id" />
     <div class="border p-3">
         <div asp-validation-summary="All" class="text-danger"></div>
         <div class="form-group row">
-            <h2 class="text-info pl-3">Add new employee</h2>
+            <h2 class="text-info pl-3">Edit existing employee</h2>
         </div>
         <div class="row">
             <div class="col-8">
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="FirstName"></label>
+                        <label asp-for="employeeToAdd.FirstName"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="FirstName" class="form-control" />
-                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                        <input asp-for="employeeToAdd.FirstName" class="form-control" />
+                        <span asp-validation-for="employeeToAdd.FirstName" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="LastName"></label>
+                        <label asp-for="employeeToAdd.LastName"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="LastName" class="form-control" />
-                        <span asp-validation-for="LastName" class="text-danger"></span>
+                        <input asp-for="employeeToAdd.LastName" class="form-control" />
+                        <span asp-validation-for="employeeToAdd.LastName" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="Salary"></label>
+                        <label asp-for="rank"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="Salary" class="form-control" />
-                        <span asp-validation-for="Salary" class="text-danger"></span>
+                        <input asp-for="rank" class="form-control" />
+                        <span asp-validation-for="rank" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="IsCEO"></label>
+                        <label asp-for="employeeToAdd.IsCEO"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="IsCEO" class="form-control" />
-                        <span asp-validation-for="IsCEO" class="text-danger"></span>
+                        <input asp-for="employeeToAdd.IsCEO" class="form-control" />
+                        <span asp-validation-for="employeeToAdd.IsCEO" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="IsManager"></label>
+                        <label asp-for="employeeToAdd.IsManager"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="IsManager" class="form-control" />
-                        <span asp-validation-for="IsManager" class="text-danger"></span>
+                        <input asp-for="employeeToAdd.IsManager" class="form-control" />
+                        <span asp-validation-for="employeeToAdd.IsManager" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="ManagerId"></label>
+                        <label asp-for="@Model.employeeToAdd.ManagerId"></label>
                     </div>
                     <div class="col-8">
-                        <input asp-for="ManagerId" class="form-control" />
-                        <span asp-validation-for="ManagerId" class="text-danger"></span>
+                        <select asp-for="@Model.employeeToAdd.ManagerId" asp-items="@(new SelectList(Model.managers,"Id","FirstName"))" class="custom-select">
+                            <option value="">No Manager</option>
+                        </select>
+                        <span asp-validation-for="@Model.employeeToAdd.ManagerId" class="text-danger"></span>
                     </div>
                 </div>
 

@@ -42,10 +42,17 @@ namespace ConsidWebExercise.BLL
         {
             try
             {
-                return await _libraryItemRepo.GetLibraryItemsById(id);
+                LibraryItem itemToReturn = await _libraryItemRepo.GetLibraryItemsById(id);
+                if(itemToReturn == null)
+                {
+                    throw new ArgumentException("There are no items with this id");
+                } else
+                {
+                    return itemToReturn;
+                }
             } catch(Exception e)
             {
-                throw new Exception(e.Message);
+                throw;
             }
         }
 
