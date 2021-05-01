@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using ConsidWebExercise.Models;
-namespace ConsidWebExercise.ViewModels
+namespace ConsidWebExercise.Models
 {
     public class CreateEmployeeViewModel
     {

@@ -3,10 +3,7 @@ using ConsidWebExercise.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using ConsidWebExercise.ViewModels;
-using Microsoft.EntityFrameworkCore;
 using ConsidWebExercise.Repos;
 
 namespace ConsidWebExercise.Controllers

@@ -1,53 +1,34 @@
 ﻿using ConsidWebExercise.Data;
 using ConsidWebExercise.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using ConsidWebExercise.ViewModels;
-using ConsidWebExercise.Repos;
+using ConsidWebExercise.BLL;
+using System;
 
 namespace ConsidWebExercise.Controllers
 {
     public class LibraryItemController : Controller
     {
-        private readonly LibraryitemRepository _libraryRepo;
-        private readonly CategoryRepository _categoryRepository;
+        private readonly LibraryItemBusinessLogic _libraryItemBll;
+        private readonly CategoryBusinessLogic _categoryBll;
 
-        public LibraryItemController(LibraryitemRepository libraryRepo, CategoryRepository categoryRepository)
+        public LibraryItemController(LibraryItemBusinessLogic libraryItemBll, CategoryBusinessLogic categoryBll)
         {
-            _libraryRepo = libraryRepo;
-            _categoryRepository = categoryRepository;
+            _libraryItemBll = libraryItemBll;
+            _categoryBll = categoryBll;
         }
 
-        private async Task<List<string>> GetAcronym(IEnumerable<LibraryItem> items)
-        {
-            List<string> acronymsToReturn = new List<string>();
-            await Task.Run(() =>
-            {
-                foreach (var item in items)
-                {
-                    string toAppend = "";
-                    MatchCollection matches = Regex.Matches(item.Title, @"\b[a-zA-Z0-9]");
-                    foreach(var match in matches)
-                    {
-                        toAppend += match.ToString();
-                    }
-                    acronymsToReturn.Add(toAppend);
-                    toAppend = "";
-                }
-            });
-            return acronymsToReturn;
-        }
+        
 
         // GET: /LibraryItem/Index?sortingId
         // Default sorting will be Category
         public async Task<IActionResult> Index(string? sortingId)
         {
-            IEnumerable<LibraryItem> listOfLibraryItems = await _libraryRepo.GetLibraryItemsSortedBy(sortingId);
-            IEnumerable<Category> categories = await _categoryRepository.GetCategoriesAsync();
-            List<string> acronyms = await GetAcronym(listOfLibraryItems);
+            IEnumerable<LibraryItem> listOfLibraryItems = await _libraryItemBll.GetLibraryItemsSortedBy(sortingId);
+            IEnumerable<Category> categories = await _categoryBll.GetAllCategoriesAsync();
+            List<string> acronyms = await _libraryItemBll.GetAcronym(listOfLibraryItems);
             var viewModel = new ListLibraryItemViewModel
             {
                 libraryItems = listOfLibraryItems,
@@ -62,15 +43,21 @@ namespace ConsidWebExercise.Controllers
         {
             if(id.HasValue)
             {
-                IEnumerable<Category> categories = await _categoryRepository.GetCategoriesAsync();
-                var viewModel = new CreateLibraryItemViewModel
+                try
                 {
-                    LibraryItem = await _libraryRepo.GetLibraryItemsById(id),
-                    Categories = categories.ToList()
-                };
-                return View(viewModel);
+                    IEnumerable<Category> categories = await _categoryBll.GetAllCategoriesAsync();
+                    var viewModel = new CreateLibraryItemViewModel
+                    {
+                        LibraryItem = await _libraryItemBll.GetLibraryItemById(id),
+                        Categories = categories.ToList()
+                    };
+                    return View(viewModel);
+                } catch(Exception e)
+                {
+                    ModelState.AddModelError("", e.Message);
+                }
             }
-            return NotFound();
+            return View();
         }
 
         // POST: /LibraryItem/Edit
@@ -80,7 +67,7 @@ namespace ConsidWebExercise.Controllers
         {
             if(obj.LibraryItem != null)
             {
-                await _libraryRepo.UpdateLibraryItem(obj.LibraryItem);
+                await _libraryItemBll.AddLibraryItem(obj.LibraryItem);
                 return RedirectToAction("Index");
             }
             return View(obj);
@@ -89,7 +76,7 @@ namespace ConsidWebExercise.Controllers
         // GET: /LibraryItem/Create
         public async Task<IActionResult> Create()
         {
-            IEnumerable<Category> categories = await _categoryRepository.GetCategoriesAsync();
+            IEnumerable<Category> categories = await _categoryBll.GetAllCategoriesAsync();
             var viewModel = new CreateLibraryItemViewModel 
             { 
                 Categories = categories.ToList()
@@ -102,11 +89,22 @@ namespace ConsidWebExercise.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreateLibraryItemViewModel obj)
         {
-            LibraryItem itemToAdd = obj.LibraryItem;
-            if(itemToAdd != null)
+            IEnumerable<Category> categories = await _categoryBll.GetAllCategoriesAsync();
+            obj.Categories = categories.ToList();
+            if (ModelState.IsValid)
             {
-                await _libraryRepo.AddLibraryItem(itemToAdd);
-                return RedirectToAction("Index");
+                try
+                {
+                    await _libraryItemBll.AddLibraryItem(obj.LibraryItem);
+                    return RedirectToAction("Index");
+                } catch(AggregateException ex)
+                {
+                    foreach(Exception exception in ex.InnerExceptions)
+                    {
+                        ModelState.AddModelError(" ", exception.Message);
+                    }
+                    return View(obj);
+                }
             }
             return View(obj);
         }
@@ -118,10 +116,12 @@ namespace ConsidWebExercise.Controllers
         {
             if (Id.HasValue)
             {
-                LibraryItem item = await _libraryRepo.GetLibraryItemsById(Id);
-                if(item != null)
+                try
                 {
-                    await _libraryRepo.RemoveLibraryItem(item);
+                    await _libraryItemBll.RemoveLibraryItem(Id);
+                } catch(ArgumentException e)
+                {
+                    ModelState.AddModelError(" ", e.Message);
                 }
             }
             return RedirectToAction("Index");

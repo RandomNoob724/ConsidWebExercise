@@ -1,11 +1,11 @@
-﻿@model ConsidWebExercise.ViewModels.CreateLibraryItemViewModel
+﻿@model CreateLibraryItemViewModel
 @{
     ViewData["Title"] = "Create Library Item";
 }
 
 <form method="post" asp-action="Create">
     <div class="border p-3">
-        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div asp-validation-summary="All" class="text-danger"></div>
         <div class="form-group row">
             <h2 class="text-info pl-3">Create Library Item</h2>
         </div>
@@ -75,36 +75,6 @@
                     <div class="col-8">
                         <input asp-for="LibraryItem.RunTimeMinutes" class="form-control" />
                         <span asp-validation-for="LibraryItem.RunTimeMinutes" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="LibraryItem.IsBorrowable"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="LibraryItem.IsBorrowable" class="form-control" />
-                        <span asp-validation-for="LibraryItem.IsBorrowable" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="LibraryItem.Borrower"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="LibraryItem.Borrower" class="form-control" />
-                        <span asp-validation-for="LibraryItem.Borrower" class="text-danger"></span>
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <div class="col-4">
-                        <label asp-for="LibraryItem.BorrowDate"></label>
-                    </div>
-                    <div class="col-8">
-                        <input asp-for="LibraryItem.BorrowDate" class="form-control" />
-                        <span asp-validation-for="LibraryItem.BorrowDate" class="text-danger"></span>
                     </div>
                 </div>
 

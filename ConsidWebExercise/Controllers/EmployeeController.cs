@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using ConsidWebExercise.Models;
 using ConsidWebExercise.BLL;
-using ConsidWebExercise.ViewModels;
+using System;
 
 namespace ConsidWebExercise.Controllers
 {
@@ -18,17 +18,31 @@ namespace ConsidWebExercise.Controllers
         // GET: /Employee/Index
         public async Task<IActionResult> Index()
         {
-            return View(await _employeeBusinessLogic.GetAllEmployeesAsync());
+            try
+            {
+                return View(await _employeeBusinessLogic.GetAllEmployeesAsync());
+            } catch (Exception ex)
+            {
+                ModelState.AddModelError(" ", ex.Message);
+                return View(ModelState);
+            }
         }
 
         // GET: /Employee/Create
         public async Task<IActionResult> Create()
         {
-            var viewModel = new CreateEmployeeViewModel
+            try
             {
-                managers = await _employeeBusinessLogic.GetManagers()
-            };
-            return View(viewModel);
+                var viewModel = new CreateEmployeeViewModel
+                {
+                    managers = await _employeeBusinessLogic.GetManagers()
+                };
+                return View(viewModel);
+            } catch(Exception ex)
+            {
+                ModelState.AddModelError(" ", ex.Message);
+                return View(ModelState);
+            }
         }
 
         // POST: /Employee/Create
@@ -38,13 +52,24 @@ namespace ConsidWebExercise.Controllers
         {
             if (ModelState.IsValid)
             {
-                if(await _employeeBusinessLogic.CreateNewEmployee(employeeModel.employeeToAdd))
+                try
                 {
+                    await _employeeBusinessLogic.CreateNewEmployee(employeeModel.employeeToAdd);
                     return RedirectToAction("Index");
+                } catch(AggregateException e)
+                {
+                    foreach(Exception exception in e.InnerExceptions)
+                    {
+                        ModelState.AddModelError(" ", exception.Message);
+                    }
+                    employeeModel.managers = await _employeeBusinessLogic.GetManagers();
+                    return View(employeeModel);
                 }
             }
-            employeeModel.managers = await _employeeBusinessLogic.GetManagers();
-            return View(employeeModel);
+            else
+            {
+                return View(employeeModel);
+            }
         }
 
         // GET: /Employee/Edit/id
@@ -68,8 +93,18 @@ namespace ConsidWebExercise.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _employeeBusinessLogic.UpdateEmployeeInfo(employee);
-                return RedirectToAction("Index");
+                try
+                {
+                    await _employeeBusinessLogic.UpdateEmployeeInfo(employee);
+                    return RedirectToAction("Index");
+                } catch(AggregateException e)
+                {
+                    foreach(Exception exception in e.InnerExceptions)
+                    {
+                        ModelState.AddModelError(" ", exception.Message);
+                    }
+                    return View(employee);
+                }
             }
             return View(employee);
         }
@@ -79,14 +114,15 @@ namespace ConsidWebExercise.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? Id)
         {
-            if (Id.HasValue)
+            try
             {
-                if(await _employeeBusinessLogic.RemoveEmployee(Id))
-                {
-                    return RedirectToAction("Index");
-                }
+                await _employeeBusinessLogic.RemoveEmployee(Id);
+                return RedirectToAction("Index");
+            } catch(Exception ex)
+            {
+                ModelState.AddModelError(" ", ex.Message);
+                return RedirectToAction("Index", ModelState);
             }
-            return RedirectToAction("Index");
         }
     }
 }

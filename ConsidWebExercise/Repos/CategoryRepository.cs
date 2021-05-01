@@ -17,30 +17,60 @@ namespace ConsidWebExercise.Repos
 
         public async Task<IEnumerable<Category>> GetCategoriesAsync()
         {
-            return await _db.Categories.ToListAsync();
+            try
+            {
+                return await _db.Categories.ToListAsync();
+            } catch(DbUpdateException ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<Category> GetCategoryById(int? id)
         {
-            return await _db.Categories.FindAsync(id);
+            try
+            {
+                return await _db.Categories.FindAsync(id);
+            } catch(DbUpdateException ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task AddCategory(Category category)
         {
-            await _db.AddAsync(category);
-            await _db.SaveChangesAsync();
+            try
+            {
+                await _db.AddAsync(category);
+                await _db.SaveChangesAsync();
+            } catch(DbUpdateException ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task UpdateCategory(Category category)
         {
-            _db.Update(category);
-            await _db.SaveChangesAsync();
+            try
+            {
+                _db.Update(category);
+                await _db.SaveChangesAsync();
+            } catch(DbUpdateException ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task RemoveCategory(Category category)
         {
-            _db.Remove(category);
-            await _db.SaveChangesAsync();
+            try
+            {
+                _db.Remove(category);
+                await _db.SaveChangesAsync();
+            } catch(DbUpdateException ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

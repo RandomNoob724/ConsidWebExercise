@@ -18,40 +18,82 @@ namespace ConsidWebExercise.Repos
 
         public async Task<IEnumerable<Employee>> GetEmployeesAsync()
         {
-            return await _db.Employees.ToListAsync();
+            try
+            {
+                return await _db.Employees.ToListAsync();
+            } catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<Employee> GetEmployeeById(int? id)
         {
-            return await _db.Employees.FindAsync(id);
+            try
+            {
+                return await _db.Employees.FindAsync(id);
+            } catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task AddEmployee(Employee employee)
         {
-            await _db.Employees.AddAsync(employee);
-            await _db.SaveChangesAsync();
+            try
+            {
+                await _db.Employees.AddAsync(employee);
+                await _db.SaveChangesAsync();
+            } catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task RemoveEmployee(Employee employee)
         {
-            _db.Remove(employee);
-            await _db.SaveChangesAsync();
+            try
+            {
+                _db.Remove(employee);
+                await _db.SaveChangesAsync();
+            } catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task UpdateEmployee(Employee employee)
         {
-            _db.Update(employee);
-            await _db.SaveChangesAsync();
+            try
+            {
+                _db.Update(employee);
+                await _db.SaveChangesAsync();
+            } catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<IEnumerable<Employee>> GetCEO()
         {
-            return await _db.Employees.Where(employee => employee.IsCEO == true).ToListAsync();
+            try
+            {
+                return await _db.Employees.Where(employee => employee.IsCEO == true).ToListAsync();
+            } catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
 
         public async Task<IEnumerable<Employee>> GetManagers()
         {
-            return await _db.Employees.Where(employee => employee.IsManager == true).ToListAsync();
+            try
+            {
+                return await _db.Employees.Where(employee => employee.IsManager == true).ToListAsync();
+            } catch(Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

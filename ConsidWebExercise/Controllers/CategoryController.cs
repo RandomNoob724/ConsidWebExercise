@@ -22,15 +22,29 @@ namespace ConsidWebExercise.Controllers
         // GET: Category/Index
         public async Task<IActionResult> Index()
         {
-            IEnumerable<Category> categoryList = await _categoryBll.GetAllCategoriesAsync();
-            return View(categoryList);
+            try
+            {
+                IEnumerable<Category> categoryList = await _categoryBll.GetAllCategoriesAsync();
+                return View(categoryList);
+            } catch(Exception ex)
+            {
+                ModelState.AddModelError(" ", ex.Message);
+                return View(ModelState);
+            }
         }
 
         // GET: Category/Edit
         public async Task<IActionResult> Edit(int? id)
         {
-            Category categoryObj = await _categoryBll.GetCategoryById(id);
-            return View(categoryObj);
+            try
+            {
+                Category categoryObj = await _categoryBll.GetCategoryById(id);
+                return View(categoryObj);
+            } catch(Exception ex)
+            {
+                ModelState.AddModelError(" ", ex.Message);
+                return View(ModelState);
+            }
         }
 
         // GET: Category/Create
@@ -46,8 +60,14 @@ namespace ConsidWebExercise.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _categoryBll.AddNewCategory(categoryObj);
-                return Redirect("Index");
+                try
+                {
+                    await _categoryBll.AddNewCategory(categoryObj);
+                    return Redirect("Index");
+                } catch(Exception e)
+                {
+                    ModelState.AddModelError(" ", e.Message);
+                }
             }
             return View(categoryObj);
         }
@@ -57,9 +77,16 @@ namespace ConsidWebExercise.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
-            Category category = await _categoryBll.GetCategoryById(id);
-            await _categoryBll.RemoveCategory(category);
-            return RedirectToAction("Index");
+            try
+            {
+                Category category = await _categoryBll.GetCategoryById(id);
+                await _categoryBll.RemoveCategory(category);
+                return RedirectToAction("Index");
+            } catch(Exception ex)
+            {
+                ModelState.AddModelError(" ", ex.Message);
+                return RedirectToAction("Index", ModelState);
+            }
         }
 
         // POST: Category/Edit/id
@@ -69,8 +96,15 @@ namespace ConsidWebExercise.Controllers
         {
             if (ModelState.IsValid)
             {
-                await _categoryBll.UpdateCategory(categoryObj);
-                return RedirectToAction("Index");
+                try
+                {
+                    await _categoryBll.UpdateCategory(categoryObj);
+                    return RedirectToAction("Index");
+                } catch(Exception ex)
+                {
+                    ModelState.AddModelError(" ", ex.Message);
+                    return View(ModelState);
+                }
             }
             return View(categoryObj);
         }

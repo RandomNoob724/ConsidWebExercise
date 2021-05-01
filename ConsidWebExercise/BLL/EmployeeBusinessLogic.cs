@@ -57,10 +57,11 @@ namespace ConsidWebExercise.BLL
         {
             try
             {
+                await ValidateEmployee(employee);
                 await _employeeRepo.UpdateEmployee(employee);
-            } catch(Exception e)
+            } catch(AggregateException e)
             {
-                throw new Exception(e.Message);
+                throw e;
             }
         }
 
@@ -87,28 +88,12 @@ namespace ConsidWebExercise.BLL
         {
             try
             {
-                //Instead of returning false return something more useful for the user to see
-                IEnumerable<Employee> CEO = await _employeeRepo.GetCEO();
-                if (employee.IsCEO)
-                {
-                    if (CEO.Count() > 0)
-                    {
-                        throw new Exception("You can only have one CEO at a time");
-                    }
-                }
-                if (employee.IsCEO && employee.IsManager)
-                {
-                    throw new Exception("Cannot assing both CEO and Manager role to a single employee");
-                }
-                if (!employee.IsCEO && !employee.IsManager && employee.ManagerId == null)
-                {
-                    throw new Exception("When creating a new employee you need to assign a manager");
-                }
+                await ValidateEmployee(employee);
                 CalculateSalary(employee);
                 await _employeeRepo.AddEmployee(employee);
-            } catch(Exception e)
+            } catch(AggregateException e)
             {
-                throw new Exception(e.Message);
+                throw e;
             }
         }
 
@@ -125,6 +110,39 @@ namespace ConsidWebExercise.BLL
             else
             {
                 employee.Salary *= EMPLOYEE_COEFICIENT;
+            }
+        }
+
+        private async Task ValidateEmployee(Employee employee)
+        {
+            try
+            {
+                var errorList = new List<Exception>();
+                IEnumerable<Employee> CEO = await _employeeRepo.GetCEO();
+                if (employee.IsCEO)
+                {
+                    if (CEO.Count() > 0)
+                    {
+                        errorList.Add(new ArgumentException("Cannot assign more than one CEO"));
+                    }
+                }
+                if (employee.IsCEO && employee.IsManager)
+                {
+                    errorList.Add(new ArgumentException("Cannot assing both CEO and Manager role to a single employee"));
+                }
+                if (!employee.IsCEO && !employee.IsManager && employee.ManagerId == null)
+                {
+                    errorList.Add(new ArgumentException("When creating a new employee you need to assign a manager"));
+                }
+                if (errorList.Count() > 0)
+                {
+                    throw new AggregateException(errorList);
+                }
+                CalculateSalary(employee);
+            }
+            catch (AggregateException e)
+            {
+                throw e;
             }
         }
     }
