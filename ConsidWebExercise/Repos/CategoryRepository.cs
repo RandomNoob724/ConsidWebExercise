@@ -31,7 +31,7 @@ namespace ConsidWebExercise.Repos
         {
             try
             {
-                return await _db.Categories.Where(category => category.CategoryName == name).ToListAsync();
+                return await _db.Categories.Where(category => category.CategoryName.ToLower() == name.ToLower()).ToListAsync();
             } catch(Exception ex)
             {
                 throw;
