@@ -64,9 +64,12 @@ namespace ConsidWebExercise.Controllers
                 {
                     await _categoryBll.AddNewCategory(categoryObj);
                     return Redirect("Index");
-                } catch(Exception e)
+                } catch(AggregateException e)
                 {
-                    ModelState.AddModelError(" ", e.Message);
+                    foreach(Exception exception in e.InnerExceptions)
+                    {
+                        ModelState.AddModelError(" ", exception.Message);
+                    }
                 }
             }
             return View(categoryObj);

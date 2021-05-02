@@ -73,7 +73,7 @@ namespace ConsidWebExercise.BLL
         {
             try
             {
-                await ValidateLibraryItem(libraryItem);
+                ValidateLibraryItem(libraryItem);
                 await _libraryItemRepo.AddLibraryItem(libraryItem);
             } catch(AggregateException e)
             {
@@ -100,7 +100,7 @@ namespace ConsidWebExercise.BLL
             }
         }
 
-        private async Task ValidateLibraryItem(LibraryItem libraryItem)
+        private void ValidateLibraryItem(LibraryItem libraryItem)
         {
             try
             {
@@ -113,19 +113,19 @@ namespace ConsidWebExercise.BLL
                 {
                     if (libraryItem.Type == "Book")
                     {
-                        await ValidateBook(libraryItem);
+                        ValidateBook(libraryItem);
                     }
                     else if (libraryItem.Type == "Reference Book")
                     {
-                        await ValidateReferenceBook(libraryItem);
+                        ValidateReferenceBook(libraryItem);
                     }
                     else if (libraryItem.Type == "Audio Book")
                     {
-                        await ValidateAudioBook(libraryItem);
+                        ValidateAudioBook(libraryItem);
                     }
                     else if (libraryItem.Type == "DVD")
                     {
-                        await ValidateDVD(libraryItem);
+                        ValidateDVD(libraryItem);
                     }
                     else
                     {
@@ -152,7 +152,7 @@ namespace ConsidWebExercise.BLL
             
         }
 
-        private async Task ValidateBook(LibraryItem libraryItem)
+        private void ValidateBook(LibraryItem libraryItem)
         {
             List<Exception> errorList = new List<Exception>();
             if(libraryItem.Author == null || libraryItem.Author.Trim() == string.Empty)
@@ -169,7 +169,7 @@ namespace ConsidWebExercise.BLL
             }
         }
 
-        private async Task ValidateDVD(LibraryItem libraryItem)
+        private void ValidateDVD(LibraryItem libraryItem)
         {
             List<Exception> errorList = new List<Exception>();
             if(libraryItem.RunTimeMinutes == null || libraryItem.RunTimeMinutes <= 0)
@@ -183,7 +183,7 @@ namespace ConsidWebExercise.BLL
             }
         }
 
-        private async Task ValidateAudioBook(LibraryItem libraryItem)
+        private void ValidateAudioBook(LibraryItem libraryItem)
         {
             List<Exception> errorList = new List<Exception>();
             if (libraryItem.RunTimeMinutes == null || libraryItem.RunTimeMinutes <= 0)
@@ -196,7 +196,7 @@ namespace ConsidWebExercise.BLL
             }
         }
 
-        private async Task ValidateReferenceBook(LibraryItem libraryItem)
+        private void ValidateReferenceBook(LibraryItem libraryItem)
         {
             List<Exception> errorList = new List<Exception>();
             if (libraryItem.Author == null || libraryItem.Author.Trim() == string.Empty)

@@ -52,13 +52,23 @@ namespace ConsidWebExercise.BLL
 
         public async Task AddNewCategory(Category category)
         {
-            if(category == null)
+            var errorList = new List<Exception>();
+            var categoryWithName = await _categoryRepo.GetCategoryByName(category.CategoryName);
+            if (category == null)
             {
-                throw new ArgumentException("Cannot add empty category");
+                errorList.Add(new ArgumentException("Cannot add empty category"));
+            }
+            if (categoryWithName.Count() > 0)
+            {
+                errorList.Add(new ArgumentException("Cannot add multiple categories with same name"));
             }
             else
             {
                 await _categoryRepo.AddCategory(category);
+            }
+            if(errorList.Count() > 0)
+            {
+                throw new AggregateException(errorList);
             }
         }
 

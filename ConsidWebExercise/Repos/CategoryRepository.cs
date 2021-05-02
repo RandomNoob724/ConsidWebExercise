@@ -4,6 +4,7 @@ using ConsidWebExercise.Data;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using ConsidWebExercise.Models;
+using System.Linq;
 
 namespace ConsidWebExercise.Repos
 {
@@ -26,6 +27,16 @@ namespace ConsidWebExercise.Repos
             }
         }
 
+        public async Task<IEnumerable<Category>> GetCategoryByName(string? name)
+        {
+            try
+            {
+                return await _db.Categories.Where(category => category.CategoryName == name).ToListAsync();
+            } catch(Exception ex)
+            {
+                throw;
+            }
+        }
         public async Task<Category> GetCategoryById(int? id)
         {
             try
