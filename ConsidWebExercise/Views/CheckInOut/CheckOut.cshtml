@@ -4,7 +4,8 @@
 }
 
 <h1>CheckOut</h1>
-<form method="post" asp-action="CheckOutPost" asp-route-Id="@Model.Id">
+<div asp-validation-summary="All" class="text-danger"></div>
+<form method="post" asp-action="CheckOut" asp-route-Id="@Model.Id">
     <input type="hidden" value="@Model.Id" />
     <div class="form-group row">
         <div class="col-4">

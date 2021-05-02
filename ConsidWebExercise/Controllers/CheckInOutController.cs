@@ -21,21 +21,30 @@ namespace ConsidWebExercise.Controllers
 
         public async Task<IActionResult> Index()
         {
-            var viewModel = await _checkInOutBusinessLogic.GetBarrowableItemsModel();
+            var viewModel = await _checkInOutBusinessLogic.GetBorrowableItemsModel();
             return View(viewModel);
         }
 
+        [HttpGet]
         // GET: /checkinout/checkout
         public async Task<IActionResult> CheckOut(int? Id)
         {
+            //If the id provided in the request is not null fetch the item that the user want to checkout and look if it is available
+            //if it is not borrowed return the CheckOut View with the viewmodel data
             if (Id.HasValue)
             {
                 LibraryItem itemToCheckOut = await _libraryItemBusinessLogic.GetLibraryItemById(Id);
-                var viewModel = new CheckOutViewModel
+                if(itemToCheckOut.Borrower != null)
                 {
-                    Id = itemToCheckOut.Id
-                };
-                return View(viewModel);
+                    return RedirectToAction("Index");
+                } else
+                {
+                    var viewModel = new CheckOutViewModel
+                    {
+                        Id = itemToCheckOut.Id
+                    };
+                    return View(viewModel);
+                }
             }
             return NotFound();
         }
@@ -63,14 +72,21 @@ namespace ConsidWebExercise.Controllers
         // POST: /checkinout/checkout/id
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CheckOutPost(CheckOutViewModel inputModel)
+        public async Task<IActionResult> CheckOut(CheckOutViewModel inputModel)
         {
             if (ModelState.IsValid)
             {
-                await _checkInOutBusinessLogic.CheckOutItem(inputModel);
-                return RedirectToAction("Index");
+                try
+                {
+                    await _checkInOutBusinessLogic.CheckOutItem(inputModel);
+                    return RedirectToAction("Index");
+                } catch(ArgumentException e)
+                {
+                    ModelState.AddModelError(" ", e.Message);
+                    return View(inputModel);
+                }   
             }
-            return RedirectToAction("Index");
+            return View(inputModel);
         }
     }
 }

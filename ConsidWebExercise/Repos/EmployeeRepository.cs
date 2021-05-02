@@ -10,6 +10,7 @@ namespace ConsidWebExercise.Repos
 {
     public class EmployeeRepository
     {
+
         private readonly ApplicationDbContext _db;
         public EmployeeRepository(ApplicationDbContext db)
         {
@@ -66,7 +67,7 @@ namespace ConsidWebExercise.Repos
         {
             try
             {
-                _db.Update(employee);
+                _db.Employees.Update(employee);
                 await _db.SaveChangesAsync();
             } catch(Exception ex)
             {
@@ -95,5 +96,7 @@ namespace ConsidWebExercise.Repos
                 throw new Exception(ex.Message);
             }
         }
+
+        
     }
 }

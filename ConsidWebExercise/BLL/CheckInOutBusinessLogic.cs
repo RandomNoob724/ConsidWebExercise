@@ -17,7 +17,7 @@ namespace ConsidWebExercise.BLL
             _categoryBll = categoryBll;
         }
 
-        public async Task<ListLibraryItemViewModel> GetBarrowableItemsModel()
+        public async Task<ListLibraryItemViewModel> GetBorrowableItemsModel()
         {
             try
             {
@@ -53,10 +53,14 @@ namespace ConsidWebExercise.BLL
             try
             {
                 LibraryItem libraryItem = await _libraryBll.GetLibraryItemById(inputModel.Id);
+                if(libraryItem.Borrower != null)
+                {
+                    throw new ArgumentException("Item cannot be borrowed by multiple people at once");
+                }
                 libraryItem.BorrowDate = DateTime.Now;
                 libraryItem.Borrower = inputModel.name;
                 await _libraryBll.UpdateLibraryItem(libraryItem);
-            } catch(Exception e)
+            } catch(ArgumentException e)
             {
                 throw;
             }

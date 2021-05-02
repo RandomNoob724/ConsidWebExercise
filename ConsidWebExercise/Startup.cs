@@ -1,7 +1,6 @@
 using ConsidWebExercise.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,6 +25,7 @@ namespace ConsidWebExercise
             services.AddScoped<LibraryitemRepository>();
             services.AddScoped<CategoryRepository>();
             services.AddScoped<EmployeeRepository>();
+
             services.AddScoped<EmployeeBusinessLogic>();
             services.AddScoped<CategoryBusinessLogic>();
             services.AddScoped<LibraryItemBusinessLogic>();
@@ -33,7 +33,7 @@ namespace ConsidWebExercise
             
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite(
-                Configuration.GetConnectionString("DefaultDatabaseConnection")));
+                Configuration.GetConnectionString("DefaultDatabaseConnection")).UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking));
 
             services.AddControllersWithViews();
         }

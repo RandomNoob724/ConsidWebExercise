@@ -78,17 +78,19 @@ namespace ConsidWebExercise.Controllers
         {
             if (Id.HasValue)
             {
-                Employee employeeToEdit = await _employeeBusinessLogic.GetEmployeeById(Id);
-                IEnumerable<Employee> managers = await _employeeBusinessLogic.GetManagers();
-                var viewModel = new CreateEmployeeViewModel
+                try
                 {
-                    employeeToAdd = employeeToEdit,
-                    managers = managers,
-                };
-
-                if(employeeToEdit != null)
-                {
+                    Employee employeeToEdit = await _employeeBusinessLogic.GetEmployeeById(Id);
+                    IEnumerable<Employee> managers = await _employeeBusinessLogic.GetManagers();
+                    var viewModel = new CreateEmployeeViewModel
+                    {
+                        employeeToAdd = employeeToEdit,
+                        managers = managers,
+                    };
                     return View(viewModel);
+                } catch(Exception e)
+                {
+                    ModelState.AddModelError("",e.Message);
                 }
             }
             return RedirectToAction("Index");
@@ -99,21 +101,18 @@ namespace ConsidWebExercise.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CreateEmployeeViewModel employeeModel)
         {
-            employeeModel.managers = await _employeeBusinessLogic.GetManagers();
-            if (ModelState.IsValid)
+            IEnumerable<Employee> managers = await _employeeBusinessLogic.GetManagers();
+            try
             {
-                try
+                await _employeeBusinessLogic.UpdateEmployeeInfo(employeeModel.employeeToAdd, employeeModel.rank);
+                return RedirectToAction("Index");
+            } catch(AggregateException e)
+            {
+                foreach(Exception exception in e.InnerExceptions)
                 {
-                    await _employeeBusinessLogic.UpdateEmployeeInfo(employeeModel.employeeToAdd, employeeModel.rank);
-                    return RedirectToAction("Index");
-                } catch(AggregateException e)
-                {
-                    foreach(Exception exception in e.InnerExceptions)
-                    {
-                        ModelState.AddModelError(" ", exception.Message);
-                    }
-                    return View(employeeModel);
+                    ModelState.AddModelError(" ", exception.Message);
                 }
+                employeeModel.managers = managers;
             }
             return View(employeeModel);
         }

@@ -3,6 +3,7 @@
 }
 
 <h1>Edit Category</h1>
+<div asp-validation-summary="All" class="text-danger"></div>
 <form asp-action="Edit" method="post">
     <input asp-for="CategoryName" type="text" value="@Model.CategoryName"/>
     <span asp-validation-for="CategoryName"></span>

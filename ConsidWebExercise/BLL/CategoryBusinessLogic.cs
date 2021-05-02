@@ -43,32 +43,23 @@ namespace ConsidWebExercise.BLL
         {
             try
             {
+                await Validate(category);
                 await _categoryRepo.UpdateCategory(category);
-            } catch(Exception e)
+            } catch(AggregateException e)
             {
-                throw new Exception(e.Message);
+                throw;
             }
         }
 
         public async Task AddNewCategory(Category category)
         {
-            var errorList = new List<Exception>();
-            var categoryWithName = await _categoryRepo.GetCategoryByName(category.CategoryName);
-            if (category == null)
+            try
             {
-                errorList.Add(new ArgumentException("Cannot add empty category"));
-            }
-            if (categoryWithName.Count() > 0)
-            {
-                errorList.Add(new ArgumentException("Cannot add multiple categories with same name"));
-            }
-            else
-            {
+                await Validate(category);
                 await _categoryRepo.AddCategory(category);
-            }
-            if(errorList.Count() > 0)
+            } catch(AggregateException e)
             {
-                throw new AggregateException(errorList);
+                throw;
             }
         }
 
@@ -95,6 +86,24 @@ namespace ConsidWebExercise.BLL
             } catch(Exception e)
             {
                 throw new Exception(e.Message);
+            }
+        }
+
+        private async Task Validate(Category category)
+        {
+            var errorList = new List<Exception>();
+            var categoryWithName = await _categoryRepo.GetCategoryByName(category.CategoryName);
+            if (category == null)
+            {
+                errorList.Add(new ArgumentException("Cannot add empty category"));
+            }
+            if (categoryWithName.Count() > 0)
+            {
+                errorList.Add(new ArgumentException("Cannot add multiple categories with same name"));
+            }
+            if (errorList.Count() > 0)
+            {
+                throw new AggregateException(errorList);
             }
         }
     }

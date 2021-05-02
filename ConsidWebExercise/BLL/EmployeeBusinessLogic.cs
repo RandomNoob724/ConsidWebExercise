@@ -21,7 +21,8 @@ namespace ConsidWebExercise.BLL
         {
             try
             {
-                return await _employeeRepo.GetEmployeesAsync();
+                IEnumerable<Employee> employees = await _employeeRepo.GetEmployeesAsync();
+                return employees.OrderByDescending(employee => employee.IsCEO).ThenByDescending(employee => employee.IsManager);
             } catch(Exception e)
             {
                 throw new Exception(e.Message);
@@ -94,50 +95,5 @@ namespace ConsidWebExercise.BLL
                 throw;
             }
         }
-
-        //Validating the employee model according to the instructions given.
-        /*private async Task ValidateEmployee(Employee employee)
-        {
-            try
-            {
-                var errorList = new List<Exception>();
-                IEnumerable<Employee> CEO = await _employeeRepo.GetCEO();
-                if (employee.IsCEO)
-                {
-                    if (CEO.Count() > 0)
-                    {
-                        errorList.Add(new ArgumentException("Cannot assign more than one CEO"));
-                    }
-                }
-                if (employee.IsCEO && employee.IsManager)
-                {
-                    errorList.Add(new ArgumentException("Cannot assing both CEO and Manager role to a single employee"));
-                }
-                if (!employee.IsCEO && !employee.IsManager && employee.ManagerId == null)
-                {
-                    errorList.Add(new ArgumentException("When creating a new employee you need to assign a manager"));
-                }
-                if (employee.IsManager && employee.ManagerId == employee.Id)
-                {
-                    errorList.Add(new ArgumentException("Manager can not be their own manager"));
-                }
-                if(employee.IsManager == false && employee.ManagerId == CEO.First().Id)
-                {
-                    errorList.Add(new ArgumentException("CEO are not allowed to be manager for employees"));
-                }
-                if(employee.IsCEO && employee.ManagerId != null)
-                {
-                    errorList.Add(new ArgumentException("CEO are not allowed to have a manager"));
-                }
-                if (errorList.Count() > 0)
-                {
-                    throw new AggregateException(errorList);
-                }
-            }
-            catch (AggregateException e)
-            {
-                throw;
-            }
-        }*/
     }
 }

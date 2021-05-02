@@ -103,10 +103,13 @@ namespace ConsidWebExercise.Controllers
                 {
                     await _categoryBll.UpdateCategory(categoryObj);
                     return RedirectToAction("Index");
-                } catch(Exception ex)
+                } catch(AggregateException e)
                 {
-                    ModelState.AddModelError(" ", ex.Message);
-                    return View(ModelState);
+                    foreach (Exception exception in e.InnerExceptions)
+                    {
+                        ModelState.AddModelError(" ", exception.Message);
+                    }
+                    return View(categoryObj);
                 }
             }
             return View(categoryObj);

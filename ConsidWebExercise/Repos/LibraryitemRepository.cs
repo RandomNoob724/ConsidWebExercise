@@ -92,7 +92,7 @@ namespace ConsidWebExercise.Repos
         {
             try
             {
-                _db.Update(libraryItem);
+                _db.LibraryItems.Update(libraryItem);
                 await _db.SaveChangesAsync();
             } catch(Exception ex)
             {

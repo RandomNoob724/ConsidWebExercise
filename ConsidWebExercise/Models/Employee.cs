@@ -49,6 +49,10 @@ namespace ConsidWebExercise.Models
                     if (CEO.Count() > 0)
                     {
                         errorList.Add(new ArgumentException("Cannot assign more than one CEO"));
+                        if (IsManager == false && ManagerId == CEO.First().Id)
+                        {
+                            errorList.Add(new ArgumentException("CEO are not allowed to be manager for employees"));
+                        }
                     }
                 }
                 if (IsCEO && IsManager)
@@ -62,10 +66,6 @@ namespace ConsidWebExercise.Models
                 if (IsManager && ManagerId == Id)
                 {
                     errorList.Add(new ArgumentException("Manager can not be their own manager"));
-                }
-                if (IsManager == false && ManagerId == CEO.First().Id)
-                {
-                    errorList.Add(new ArgumentException("CEO are not allowed to be manager for employees"));
                 }
                 if (IsCEO && ManagerId != null)
                 {

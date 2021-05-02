@@ -5,9 +5,9 @@
 
 <h1>Edit</h1>
 <form method="post" asp-action="Edit">
-    <input type="hidden" asp-for="employeeToAdd.Id" />
     <div class="border p-3">
         <div asp-validation-summary="All" class="text-danger"></div>
+        <input type="hidden" asp-for="employeeToAdd.Id" />
         <div class="form-group row">
             <h2 class="text-info pl-3">Edit existing employee</h2>
         </div>
@@ -65,13 +65,13 @@
 
                 <div class="form-group row">
                     <div class="col-4">
-                        <label asp-for="@Model.employeeToAdd.ManagerId"></label>
+                        <label asp-for="employeeToAdd.ManagerId"></label>
                     </div>
                     <div class="col-8">
-                        <select asp-for="@Model.employeeToAdd.ManagerId" asp-items="@(new SelectList(Model.managers,"Id","FirstName"))" class="custom-select">
+                        <select asp-for="employeeToAdd.ManagerId" asp-items="@(new SelectList(Model.managers,"Id","FirstName"))" class="custom-select">
                             <option value="">No Manager</option>
                         </select>
-                        <span asp-validation-for="@Model.employeeToAdd.ManagerId" class="text-danger"></span>
+                        <span asp-validation-for="employeeToAdd.ManagerId" class="text-danger"></span>
                     </div>
                 </div>
 

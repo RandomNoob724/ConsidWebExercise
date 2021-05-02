@@ -63,10 +63,18 @@ namespace ConsidWebExercise.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(CreateLibraryItemViewModel obj)
         {
-            if(obj.LibraryItem != null)
+            IEnumerable<Category> categories = await _categoryBll.GetAllCategoriesAsync();
+            try
             {
-                await _libraryItemBll.AddLibraryItem(obj.LibraryItem);
+                await _libraryItemBll.UpdateLibraryItem(obj.LibraryItem);
                 return RedirectToAction("Index");
+            } catch(AggregateException e)
+            {
+                foreach(Exception exception in e.InnerExceptions)
+                {
+                    ModelState.AddModelError(" ", exception.Message);
+                }
+                obj.Categories = categories.ToList();
             }
             return View(obj);
         }
