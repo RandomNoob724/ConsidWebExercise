@@ -1,33 +1,43 @@
-﻿using ConsidWebExercise.Data;
+﻿using ConsidWebExercise.BLL;
 using ConsidWebExercise.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using ConsidWebExercise.Repos;
+
 
 namespace ConsidWebExercise.Controllers
 {
     public class CheckInOutController : Controller
     {
-        private readonly LibraryitemRepository _libraryRepo;
-        private readonly CategoryRepository _categoryRepo;
-        public CheckInOutController(LibraryitemRepository libraryRepo, CategoryRepository categoryRepo)
+        private readonly CheckInOutBusinessLogic _checkInOutBusinessLogic;
+        private readonly LibraryItemBusinessLogic _libraryItemBusinessLogic;
+        
+        public CheckInOutController(CheckInOutBusinessLogic checkInOutBusinessLogic, LibraryItemBusinessLogic libraryItemBusinessLogic)
         {
-            _libraryRepo = libraryRepo;
-            _categoryRepo = categoryRepo;
+            _checkInOutBusinessLogic = checkInOutBusinessLogic;
+            _libraryItemBusinessLogic = libraryItemBusinessLogic;
         }
 
         public async Task<IActionResult> Index()
         {
-            IEnumerable<LibraryItem> libraryItems = await _libraryRepo.GetBarrowableItems();
-            IEnumerable<Category> categories = await _categoryRepo.GetCategoriesAsync();
-            var viewModel = new ListLibraryItemViewModel
-            {
-                libraryItems = libraryItems,
-                categories = categories
-            };
+            var viewModel = await _checkInOutBusinessLogic.GetBarrowableItemsModel();
             return View(viewModel);
+        }
+
+        // GET: /checkinout/checkout
+        public async Task<IActionResult> CheckOut(int? Id)
+        {
+            if (Id.HasValue)
+            {
+                LibraryItem itemToCheckOut = await _libraryItemBusinessLogic.GetLibraryItemById(Id);
+                var viewModel = new CheckOutViewModel
+                {
+                    Id = itemToCheckOut.Id
+                };
+                return View(viewModel);
+            }
+            return NotFound();
         }
 
         // POST: /checkinout/checkin/id
@@ -37,40 +47,30 @@ namespace ConsidWebExercise.Controllers
         {
             if (Id.HasValue)
             {
-                LibraryItem item = await _libraryRepo.GetLibraryItemsById(Id);
-                item.BorrowDate = null;
-                item.Borrower = null;
-                await _libraryRepo.UpdateLibraryItem(item);
-                return RedirectToAction("Index");
+                try
+                {
+                    await _checkInOutBusinessLogic.CheckInItem(Id);
+                    return RedirectToAction("Index");
+                }
+                catch (Exception e)
+                {
+                    throw;
+                }
             }
-            return NotFound();
+            return RedirectToAction("Index");
         }
 
-        // GET: /checkinout/checkout
-        public async Task<IActionResult> CheckOut(int? Id)
-        {
-            if (Id.HasValue)
-            {
-                LibraryItem item = await _libraryRepo.GetLibraryItemsById(Id);
-                return View(item);
-            }
-            return NotFound();
-        }
-
+        // POST: /checkinout/checkout/id
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CheckOutPost(int? Id, string borrower)
+        public async Task<IActionResult> CheckOutPost(CheckOutViewModel inputModel)
         {
-            if(Id.HasValue && borrower != null)
+            if (ModelState.IsValid)
             {
-                LibraryItem item = await _libraryRepo.GetLibraryItemsById(Id);
-                item.BorrowDate = DateTime.Now;
-                item.Borrower = borrower;
-
-                await _libraryRepo.UpdateLibraryItem(item);
+                await _checkInOutBusinessLogic.CheckOutItem(inputModel);
                 return RedirectToAction("Index");
             }
-            return NotFound();
+            return RedirectToAction("Index");
         }
     }
 }

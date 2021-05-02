@@ -1,4 +1,4 @@
-﻿@model CreateLibraryItemViewModel 
+﻿@model CreateLibraryItemViewModel
 @{
     ViewData["Title"] = "Edit";
 }
@@ -32,7 +32,7 @@
                         <label asp-for="LibraryItem.CategoryId"></label>
                     </div>
                     <div class="col-8">
-                        
+
                         <select asp-for="LibraryItem.CategoryId" asp-items="@(new SelectList(Model.Categories,"Id","CategoryName"))" class="custom-select">
                         </select>
                         <span asp-validation-for="LibraryItem.CategoryId" class="text-danger"></span>
@@ -91,7 +91,6 @@
                 </div>
             </div>
             <div class="col-4">
-                @* Keep this empty *@
             </div>
         </div>
     </div>

@@ -38,6 +38,17 @@ namespace ConsidWebExercise.BLL
             }
         }
 
+        public async Task<IEnumerable<LibraryItem>> GetBorrowableItems()
+        {
+            try
+            {
+                return await _libraryItemRepo.GetBarrowableItems();
+            } catch(Exception e)
+            {
+                throw;
+            }
+        }
+
         public async Task<LibraryItem> GetLibraryItemById(int? id)
         {
             try
@@ -95,6 +106,18 @@ namespace ConsidWebExercise.BLL
                     await _libraryItemRepo.RemoveLibraryItem(libraryItem);
                 }
             } catch(ArgumentException e)
+            {
+                throw;
+            }
+        }
+
+        public async Task UpdateLibraryItem(LibraryItem item)
+        {
+            try
+            {
+                ValidateLibraryItem(item);
+                await _libraryItemRepo.UpdateLibraryItem(item);
+            } catch(AggregateException ex)
             {
                 throw;
             }

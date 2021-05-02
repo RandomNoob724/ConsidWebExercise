@@ -19,9 +19,12 @@ namespace ConsidWebExercise.Models
         public string Title { get; set; }
         public string Author { get; set; }
         public int? Pages { get; set; }
+        [Display(Name = "Run Time Minutes")]
         public int? RunTimeMinutes { get; set; }
+        [Display(Name = "Borrowable")]
         public bool IsBorrowable { get; set; }
         public string Borrower { get; set; }
+        [Display(Name = "Borrow Date")]
         public DateTime? BorrowDate { get; set; }
         [Required]
         public string Type { get; set; }

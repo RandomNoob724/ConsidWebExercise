@@ -29,6 +29,8 @@ namespace ConsidWebExercise
             services.AddScoped<EmployeeBusinessLogic>();
             services.AddScoped<CategoryBusinessLogic>();
             services.AddScoped<LibraryItemBusinessLogic>();
+            services.AddScoped<CheckInOutBusinessLogic>();
+            
             services.AddDbContext<ApplicationDbContext>(options =>
             options.UseSqlite(
                 Configuration.GetConnectionString("DefaultDatabaseConnection")));
