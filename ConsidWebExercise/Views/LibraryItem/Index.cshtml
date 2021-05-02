@@ -51,22 +51,22 @@
             </thead>
             <tbody>
 
-                @for(int i = 0; i < Model.libraryItems.Count(); i++)
+                @foreach(var item in Model.libraryItems)
                 {
                     <tr>
-                        <td>@Model.libraryItems.ElementAt(i).Title (@Model.acronyms.ElementAt(i))</td>
-                        <td>@Model.categories.Where(category => category.Id == Model.libraryItems.ElementAt(i).CategoryId).First().CategoryName</td>
-                        <td>@Model.libraryItems.ElementAt(i).Author</td>
-                        <td>@Model.libraryItems.ElementAt(i).Pages</td>
-                        <td>@Model.libraryItems.ElementAt(i).RunTimeMinutes</td>
-                        <td>@Model.libraryItems.ElementAt(i).IsBorrowable</td>
-                        <td>@Model.libraryItems.ElementAt(i).Borrower</td>
-                        <td>@Model.libraryItems.ElementAt(i).BorrowDate</td>
-                        <td>@Model.libraryItems.ElementAt(i).Type</td>
+                        <td>@item.Title (@await Model.GetAcronym(item))</td>
+                        <td>@item.Category.CategoryName</td>
+                        <td>@item.Author</td>
+                        <td>@item.Pages</td>
+                        <td>@item.RunTimeMinutes</td>
+                        <td>@item.IsBorrowable</td>
+                        <td>@item.Borrower</td>
+                        <td>@item.BorrowDate</td>
+                        <td>@item.Type</td>
                         <td class="text-center">
                             <div class="w-75 btn-group" role="group">
-                                <a asp-controller="LibraryItem" asp-route-Id="@Model.libraryItems.ElementAt(i).Id" asp-action="Edit" class="btn btn-info mx-2">Edit</a>
-                                <form asp-action="Delete" asp-route-id="@Model.libraryItems.ElementAt(i).Id " method="post">
+                                <a asp-controller="LibraryItem" asp-route-Id="@item.Id" asp-action="Edit" class="btn btn-info mx-2">Edit</a>
+                                <form asp-action="Delete" asp-route-id="@item.Id " method="post">
                                     <button type="submit" class="btn btn-danger mx-2">Delete</button>
                                 </form>
                             </div>

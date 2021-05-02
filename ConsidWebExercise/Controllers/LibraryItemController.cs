@@ -28,12 +28,10 @@ namespace ConsidWebExercise.Controllers
         {
             IEnumerable<LibraryItem> listOfLibraryItems = await _libraryItemBll.GetLibraryItemsSortedBy(sortingId);
             IEnumerable<Category> categories = await _categoryBll.GetAllCategoriesAsync();
-            List<string> acronyms = await _libraryItemBll.GetAcronym(listOfLibraryItems);
             var viewModel = new ListLibraryItemViewModel
             {
                 libraryItems = listOfLibraryItems,
-                categories = categories,
-                acronyms = acronyms
+                categories = categories
             };
             return View(viewModel);
         }

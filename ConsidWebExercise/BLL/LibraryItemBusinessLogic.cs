@@ -100,26 +100,6 @@ namespace ConsidWebExercise.BLL
             }
         }
 
-        public async Task<List<string>> GetAcronym(IEnumerable<LibraryItem> items)
-        {
-            List<string> acronymsToReturn = new List<string>();
-            await Task.Run(() =>
-            {
-                foreach (var item in items)
-                {
-                    string toAppend = "";
-                    MatchCollection matches = Regex.Matches(item.Title, @"\b[a-zA-Z0-9]");
-                    foreach (var match in matches)
-                    {
-                        toAppend += match.ToString();
-                    }
-                    acronymsToReturn.Add(toAppend);
-                    toAppend = "";
-                }
-            });
-            return acronymsToReturn;
-        }
-
         private async Task ValidateLibraryItem(LibraryItem libraryItem)
         {
             try
