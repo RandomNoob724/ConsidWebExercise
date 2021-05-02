@@ -90,7 +90,7 @@ namespace ConsidWebExercise.Repos
         {
             try
             {
-                return await _db.Employees.Where(employee => employee.IsManager == true).ToListAsync();
+                return await _db.Employees.Where(employee => employee.IsManager || employee.IsCEO == true).ToListAsync();
             } catch(Exception ex)
             {
                 throw new Exception(ex.Message);

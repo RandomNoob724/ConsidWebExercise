@@ -17,6 +17,7 @@ namespace ConsidWebExercise.BLL
             _employeeRepo = employeeRepo;
         }
 
+        //Fetches all of the employees from the employee repository
         public async Task<IEnumerable<Employee>> GetAllEmployeesAsync()
         {
             try
@@ -29,6 +30,7 @@ namespace ConsidWebExercise.BLL
             }
         }
 
+        //Gets employee depending on ID from the employee repository
         public async Task<Employee> GetEmployeeById(int? id)
         {
             try
@@ -40,6 +42,7 @@ namespace ConsidWebExercise.BLL
             }
         }
 
+        //Get managers from the employee repository
         public async Task<IEnumerable<Employee>> GetManagers()
         {
             try
@@ -51,11 +54,12 @@ namespace ConsidWebExercise.BLL
             }
         }
 
+        //Update employee does a check to validate the updated employee object in order to see if it breaks any of the set rules
         public async Task UpdateEmployeeInfo(Employee employee, int rank)
         {
             try
             {
-                employee.Validate(await _employeeRepo.GetCEO());
+                employee.Validate(await GetAllEmployeesAsync());
                 employee.CalculateSalary(rank);
                 await _employeeRepo.UpdateEmployee(employee);
             } catch(AggregateException e)
@@ -64,30 +68,40 @@ namespace ConsidWebExercise.BLL
             }
         }
 
+        //Called when removing employees, have special check for if they are a manager and if they are currently managing an employee
+        //If they are managing another employee error will be thrown
         public async Task RemoveEmployee(int? employeeId)
         {
             try
             {
+                List<Exception> errorList = new List<Exception>();
                 Employee employeeToRemove = await GetEmployeeById(employeeId);
+                IEnumerable<Employee> employees = await GetAllEmployeesAsync();
                 if (employeeToRemove == null)
                 {
-                    throw new Exception("Cannot remove employee with no data");
+                    errorList.Add(new ArgumentException("Cannot perform action on empty object"));
                 }
-                else
+                if (employeeToRemove.IsManager || employeeToRemove.IsCEO && employees.Where(employee => employee.ManagerId == employeeToRemove.Id).Count() > 0)
                 {
-                    await _employeeRepo.RemoveEmployee(employeeToRemove);
+                    errorList.Add(new ArgumentException("Cannot remove employee that is currently managing another employee"));
                 }
-            } catch(Exception e)
+                if(errorList.Count() > 0)
+                {
+                    throw new AggregateException(errorList);
+                }
+                await _employeeRepo.RemoveEmployee(employeeToRemove);
+            } catch(AggregateException e)
             {
                 throw;
             }
         }
 
+        //When creating a new employee the new employee model will be validated in order to know if it breaks any of the set rules in the system
         public async Task CreateNewEmployee(Employee employee, int rank)
         {
             try
             {
-                employee.Validate(await _employeeRepo.GetCEO());
+                employee.Validate(await GetAllEmployeesAsync());
                 employee.CalculateSalary(rank);
                 await _employeeRepo.AddEmployee(employee);
             } catch(AggregateException e)

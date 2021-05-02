@@ -53,7 +53,7 @@
                 {
                     <tr>
                         <td>@item.Title (@await Model.GetAcronym(item))</td>
-                        <td>@item.Category.CategoryName</td>
+                        <td>@Model.categories.Where(category => category.Id == item.CategoryId).First().CategoryName</td>
                         <td>@item.Author</td>
                         <td>@item.Pages</td>
                         <td>@item.RunTimeMinutes</td>

@@ -102,17 +102,21 @@ namespace ConsidWebExercise.Controllers
         public async Task<IActionResult> Edit(CreateEmployeeViewModel employeeModel)
         {
             IEnumerable<Employee> managers = await _employeeBusinessLogic.GetManagers();
-            try
+            employeeModel.managers = managers;
+            if (ModelState.IsValid)
             {
-                await _employeeBusinessLogic.UpdateEmployeeInfo(employeeModel.employeeToAdd, employeeModel.rank);
-                return RedirectToAction("Index");
-            } catch(AggregateException e)
-            {
-                foreach(Exception exception in e.InnerExceptions)
+                try
                 {
-                    ModelState.AddModelError(" ", exception.Message);
+                    await _employeeBusinessLogic.UpdateEmployeeInfo(employeeModel.employeeToAdd, employeeModel.rank);
+                    return RedirectToAction("Index");
                 }
-                employeeModel.managers = managers;
+                catch (AggregateException e)
+                {
+                    foreach (Exception exception in e.InnerExceptions)
+                    {
+                        ModelState.AddModelError(" ", exception.Message);
+                    }
+                }
             }
             return View(employeeModel);
         }
@@ -126,10 +130,14 @@ namespace ConsidWebExercise.Controllers
             {
                 await _employeeBusinessLogic.RemoveEmployee(Id);
                 return RedirectToAction("Index");
-            } catch(Exception ex)
+            } catch(AggregateException ex)
             {
-                ModelState.AddModelError(" ", ex.Message);
-                return RedirectToAction("Index", ModelState);
+                Employee employee = await _employeeBusinessLogic.GetEmployeeById(Id);
+                foreach(Exception exception in ex.InnerExceptions)
+                {
+                    ModelState.AddModelError("", exception.Message);
+                }
+                return View(employee);
             }
         }
     }

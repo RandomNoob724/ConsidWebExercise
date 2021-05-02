@@ -75,20 +75,29 @@ namespace ConsidWebExercise.Controllers
             return View(categoryObj);
         }
 
+        [HttpGet]
+        public IActionResult Delete()
+        {
+            return View();
+        }
+
         // POST: Category/Delete/id
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Delete(int? id)
         {
+            Category category = await _categoryBll.GetCategoryById(id);
             try
             {
-                Category category = await _categoryBll.GetCategoryById(id);
                 await _categoryBll.RemoveCategory(category);
                 return RedirectToAction("Index");
-            } catch(Exception ex)
+            } catch(AggregateException ex)
             {
-                ModelState.AddModelError(" ", ex.Message);
-                return RedirectToAction("Index", ModelState);
+                foreach(Exception exception in ex.InnerExceptions)
+                {
+                    ModelState.AddModelError(" ", exception.Message);
+                }
+                return View(category);
             }
         }
 

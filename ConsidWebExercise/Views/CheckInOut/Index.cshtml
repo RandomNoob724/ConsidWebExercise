@@ -36,7 +36,7 @@
                 {
                     <tr>
                         <td>@obj.Title</td>
-                        <td>@obj.Category.CategoryName</td>
+                        <td>@Model.categories.Where(category => category.Id == obj.CategoryId).First().CategoryName</td>
                         <td>@obj.Author</td>
                         <td>@obj.Pages</td>
                         <td>@obj.RunTimeMinutes</td>

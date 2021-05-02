@@ -31,7 +31,8 @@ namespace ConsidWebExercise.BLL
         {
             try
             {
-                return await _libraryItemRepo.GetLibraryItemsSortedBy(sortingId);
+                IEnumerable<LibraryItem> libraryItems = await _libraryItemRepo.GetLibraryItemsSortedBy(sortingId);
+                return libraryItems;
             } catch(Exception e)
             {
                 throw new Exception(e.Message);
@@ -123,6 +124,7 @@ namespace ConsidWebExercise.BLL
             }
         }
 
+        //validates the libraryitems and does this different for every single type of item in the system
         private void ValidateLibraryItem(LibraryItem libraryItem)
         {
             try

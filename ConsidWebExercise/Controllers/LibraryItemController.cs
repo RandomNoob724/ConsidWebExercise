@@ -20,10 +20,8 @@ namespace ConsidWebExercise.Controllers
             _categoryBll = categoryBll;
         }
 
-        
-
         // GET: /LibraryItem/Index?sortingId
-        // Default sorting will be Category
+        // Default sorting will be Category but in view the user will be able to change this depending on preference
         public async Task<IActionResult> Index(string? sortingId)
         {
             IEnumerable<LibraryItem> listOfLibraryItems = await _libraryItemBll.GetLibraryItemsSortedBy(sortingId);
@@ -64,17 +62,22 @@ namespace ConsidWebExercise.Controllers
         public async Task<IActionResult> Edit(CreateLibraryItemViewModel obj)
         {
             IEnumerable<Category> categories = await _categoryBll.GetAllCategoriesAsync();
-            try
+            obj.Categories = categories.ToList();
+            if (ModelState.IsValid)
             {
-                await _libraryItemBll.UpdateLibraryItem(obj.LibraryItem);
-                return RedirectToAction("Index");
-            } catch(AggregateException e)
-            {
-                foreach(Exception exception in e.InnerExceptions)
+                try
                 {
-                    ModelState.AddModelError(" ", exception.Message);
+                    await _libraryItemBll.UpdateLibraryItem(obj.LibraryItem);
+                    return RedirectToAction("Index");
                 }
-                obj.Categories = categories.ToList();
+                catch (AggregateException e)
+                {
+                    foreach (Exception exception in e.InnerExceptions)
+                    {
+                        ModelState.AddModelError(" ", exception.Message);
+                    }
+                    return View(obj);
+                }
             }
             return View(obj);
         }
@@ -114,6 +117,7 @@ namespace ConsidWebExercise.Controllers
             }
             return View(obj);
         }
+
 
         // POST: /LibraryItem/Delete/id
         [HttpPost]
